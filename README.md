@@ -1,3 +1,1 @@
-"# SmartUppBot" 
-"# SmartUppBot" 
-"# SmartUppBot" 
+USing https://github.com/BornTactical/DiscordUpp
