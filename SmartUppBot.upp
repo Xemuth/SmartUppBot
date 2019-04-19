@@ -3,7 +3,8 @@ description "Smart Bot Discord made with UPP !\377";
 uses
 	Core,
 	DiscordUpp,
-	CtrlLib;
+	CtrlLib,
+	Core/SSL;
 
 file
 	SmartBotUpp.cpp;
