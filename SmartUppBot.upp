@@ -2,13 +2,16 @@ description "Smart Bot Discord made with UPP !\377";
 
 uses
 	Core,
+	Core/SSL,
 	DiscordUpp,
-	CtrlLib,
-	Core/SSL;
+	plugin/sqlite3;
 
 file
+	schema.sch,
+	sql_lite.h,
 	SmartBotUpp.cpp;
 
 mainconfig
-	"" = "";
+	"" = "",
+	"" = "F";
 
