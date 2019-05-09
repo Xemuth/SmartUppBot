@@ -10,7 +10,6 @@
 
 using namespace Upp;
 
-//Je te la synchro auto
 CONSOLE_APP_MAIN {
 
     Discord bot("314391413200650250","MzE0MzkxNDEzMjAwNjUwMjUw.XLbeew.4-EvNJLFiPGMVoZ6s7pTnoqEObc");
@@ -25,8 +24,36 @@ CONSOLE_APP_MAIN {
         
         String battletag;
         ValueMap json;
+        Cout() << "Debut programme\n";
         
-        //Cout() << "Content : " << content<< "\n";
+        // ----------- Instantiation SQL LITE 3 --------------------
+        Sqlite3Session sqlite3;
+		sqlite3.LogErrors(true);
+		if(!sqlite3.Open(ConfigFile("simple.db"))) {
+			Cout() << "Can't create or open database file\n";
+			return;
+		}
+		
+		SQL = sqlite3;
+		
+		Cout() << "Fichier .db ouvert\n";
+		
+		#ifdef _DEBUG
+			SqlSchema sch(SQLITE3);
+			All_Tables(sch);
+			if(sch.ScriptChanged(SqlSchema::UPGRADE))
+				SqlPerformScript(sch.Upgrade());
+			if(sch.ScriptChanged(SqlSchema::ATTRIBUTES)) {
+				SqlPerformScript(sch.Attributes());
+			}
+			if(sch.ScriptChanged(SqlSchema::CONFIG)) {
+				SqlPerformScript(sch.ConfigDrop());
+				SqlPerformScript(sch.Config());
+			}
+			sch.SaveNormal();
+		#endif
+        
+        Cout() << "Debut traitement \n";
 	        
 	        //Affichage des stats d'un BattleTag
 	        if (content.Find("!stats")!=-1){
@@ -42,74 +69,57 @@ CONSOLE_APP_MAIN {
 				json = ParseJSON(query.Execute());
 	        	bot.CreateMessage(channel,json["rating"]);
 	       
-	        }//MAJ des stats d'un BattleTag
+	        }//------------------ MAJ des stats d'un BattleTag ---------------------- 
 	        else if(content.Find("!upd")!=-1){
- 	      		content.Remove(0, 5);
- 	      		battletag = content;
- 	      		
- 	      		//bot.CreateMessage(channel, "Mise à jours des stats pour " + battletag);
-	        	
+	            S_SESSION rowSession;
+	            	            
+	            if (content.GetLength() == 4){ //Commande = !upd
+	 	      		Sql sqlGetBattletag;
+	 	      		
+	 	      		//------------------ Recherche du battletag sur la bdd ----------------------
+	 	      		sqlGetBattletag*Select(rowSession).From(SESSION).Where(DISCORD_NAME == userName);
+					
+					if (sqlGetBattletag.Fetch()){
+						Cout() << "Battletag trouvé\n";
+						battletag = ~sqlGetBattletag[1];
+					}
+					else{
+						Cout() << "Battletag non trouvé\n";
+						bot.CreateMessage(channel, "Aucun compte BattleNet n'est associé à votre nom discord, pour l'ajouter merci d'utiliser la commande '!upd [BattleTag]' en remplacant le '#' par un '-'.");
+						return;
+					}
+	            }
+	            else{//Commande = !upd NattyRoots-21691
+	                content.Remove(0, 5);
+	                battletag = content;
+	            }
+ 	      		//-------------------------- REQUETE API OW ------------------------------	
+ 	      		Cout() << "Requete API OW\n";
+ 	      		        	
 	        	HttpRequest query("https://ow-api.com/v1/stats/pc/eu/" + battletag + "/profile");
 				query.GET();
 				query.Timeout(5000);
 				
 				json = ParseJSON(query.Execute());
 	        	
-	        	Sqlite3Session sqlite3;
-				sqlite3.LogErrors(true);
-				if(!sqlite3.Open(ConfigFile("simple.db"))) {
-					Cout() << "Can't create or open database file\n";
-					return;
-				}
-				
-				SQL = sqlite3;
-				
-				#ifdef _DEBUG
-					SqlSchema sch(SQLITE3);
-					All_Tables(sch);
-					if(sch.ScriptChanged(SqlSchema::UPGRADE))
-						SqlPerformScript(sch.Upgrade());
-					if(sch.ScriptChanged(SqlSchema::ATTRIBUTES)) {
-						SqlPerformScript(sch.Attributes());
-					}
-					if(sch.ScriptChanged(SqlSchema::CONFIG)) {
-						SqlPerformScript(sch.ConfigDrop());
-						SqlPerformScript(sch.Config());
-					}
-					sch.SaveNormal();
-				#endif
-				
-				S_SESSION rowSession;
-				Sql sqlInsert;
-				
 				String rang = ~json["rating"];
 				
+				//----------------- INSERTION SESSION ---------------------------------------
+				Cout() << "Insertion nouvel ligne (" + battletag + ", " + userName + ", " + rang + ")\n";
+				
+				Sql sqlInsert;
 				sqlInsert*Insert(SESSION)(BATTLETAG, battletag)(DISCORD_NAME, userName)(RANK, rang);
-				
-				/*
-				sql*Select(rowCompte).From(SESSION).Where(BATTLETAG == battletag);
-				Cout() << sql.ToString() << "\n";
-				
-				if (!sql.Fetch()){
-					Cout() << "Compte " + battletag + " introuvable, création necessaire.\n";
-					sql*Insert(SESSION)(BATTLETAG, battletag)(RANK, ~json["rating"])(DATE_SESSION, Date());
-				}
-				else{
-					Cout() << "Compte " + battletag + " recuperer, mise à jours.\n";
-						
-					bot.CreateMessage(channel, "Le rang actuel de " + ~sql[1] + " est de " + ~sql[2]);
-				}
-				*/
-				
+
 				Sql sqlSelect;
 				
-				sqlSelect*Select(rowSession).From(SESSION).Where(BATTLETAG == battletag);
+				sqlSelect*Select(rowSession).From(SESSION).Where(DISCORD_NAME == userName);
 				
-				bot.CreateMessage(channel, "Mise à jours de " + ~sqlSelect[1] + " : ELO " + ~sqlSelect[3]);
+				bot.CreateMessage(channel, "Mise à jour de " + ~sqlSelect[1] + " : ELO " + ~sqlSelect[3]);
 				
 				while(sqlSelect.Fetch()){
-					Cout() << ~sqlSelect[0] + " : BT=" + ~sqlSelect[1] + " ; DISCORD =" + ~sqlSelect[2] + " ; ELO = " + ~sqlSelect[3] + /*" at " + ~sqlSelect[4] + */"\n";
+					Cout() << ~sqlSelect[0] + " : BT = " + ~sqlSelect[1] + " ; DISCORD =" + ~sqlSelect[2] + " ; ELO = " + ~sqlSelect[3] + /*" at " + ~sqlSelect[4] + */"\n";
 				}
+				
  	    	}/*
 	        else if(content.Find(1, '!')!=-1){
 	            bot.CreateMessage(channel, "Commande introuvable");
