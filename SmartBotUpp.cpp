@@ -84,7 +84,7 @@ CONSOLE_APP_MAIN {
 				
 				String rang = ~json["rating"];
 				
-				sqlInsert*Insert(SESSION)(BATTLETAG, battletag)(RANK, rang)(DATE_SESSION, Date());
+				sqlInsert*Insert(SESSION)(BATTLETAG, battletag)(DISCORD_NAME, userName)(RANK, rang);
 				
 				/*
 				sql*Select(rowCompte).From(SESSION).Where(BATTLETAG == battletag);
@@ -100,15 +100,15 @@ CONSOLE_APP_MAIN {
 					bot.CreateMessage(channel, "Le rang actuel de " + ~sql[1] + " est de " + ~sql[2]);
 				}
 				*/
+				
 				Sql sqlSelect;
 				
 				sqlSelect*Select(rowSession).From(SESSION).Where(BATTLETAG == battletag);
 				
-				bot.CreateMessage(channel, "Mise à jours de " + ~sqlSelect[1] + " : ELO " + ~sqlSelect[2]);
-				
+				bot.CreateMessage(channel, "Mise à jours de " + ~sqlSelect[1] + " : ELO " + ~sqlSelect[3]);
 				
 				while(sqlSelect.Fetch()){
-					Cout() << ~sqlSelect[0] + " : BT=" + ~sqlSelect[1] + " ; RANK=" + ~sqlSelect[2] + " at " + ~sqlSelect[3] + "\n";
+					Cout() << ~sqlSelect[0] + " : BT=" + ~sqlSelect[1] + " ; DISCORD =" + ~sqlSelect[2] + " ; ELO = " + ~sqlSelect[3] + /*" at " + ~sqlSelect[4] + */"\n";
 				}
  	    	}/*
 	        else if(content.Find(1, '!')!=-1){
