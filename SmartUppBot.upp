@@ -4,7 +4,8 @@ uses
 	Core,
 	Core/SSL,
 	DiscordUpp,
-	plugin/sqlite3;
+	plugin/sqlite3,
+	RconManager;
 
 file
 	schema.sch,

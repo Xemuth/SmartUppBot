@@ -1,6 +1,7 @@
 #include <Core/Core.h>
 #include <DiscordUpp/Discord.h>
 #include <SmartUppBot/sql_lite.h>
+#include <RconManager/RconManager.h>
 #include <chrono>
 
 #ifdef _DEBUG
@@ -124,17 +125,20 @@ CONSOLE_APP_MAIN {
 			bot.CreateMessage(channel, "Mise à jour de " + ~sqlSelect[1] + " : ELO " + ~sqlSelect[3]);
 			
 			while(sqlSelect.Fetch()){
-				Cout() << ~sqlSelect[0] + " : BT = " + ~sqlSelect[1] + " ; DISCORD =" + ~sqlSelect[2] + " ; ELO = " + ~sqlSelect[3] + /*" at " + ~sqlSelect[4] + */"\n";
+				Cout() << ~sqlSelect[0] + " : BT = " + ~sqlSelect[1] + " ; DISCORD = " + ~sqlSelect[2] + " ; ELO = " + ~sqlSelect[3] + /*" at " + ~sqlSelect[4] + */"\n";
 			}
 			
     	}
-    	else if(content.Find("!leader")){
-    		/*Sql sqlSelect;
+    	else if(content.Find("!leaderboard")){
+    		Sql sqlSelect;
     		S_SESSION rowSession;
     		
-    		sqlSelect.*Select(rowSession).From*/
+    		sqlSelect*Select(Distinct(rowSession.BATTLETAG)).From(SESSION);
     		
-    		SQL.Execute("SELECT DISCTINCT BATTLETAG FROM ")
+    		int i = 0;
+    		while (sqlSelect.Fetch()){
+    			bot.CreateMessage(channel, i + " : " + ~sqlSelect[0]);
+    		}
     	}/*
         else if(content.Find(1, '!')!=-1){
             bot.CreateMessage(channel, "Commande introuvable");
