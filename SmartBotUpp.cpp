@@ -13,7 +13,7 @@
 using namespace Upp;
 
 CONSOLE_APP_MAIN {
-
+	RconManager rcon("51.254.91.2", 27066,"respect","minecraft");
     Discord bot("314391413200650250","MzE0MzkxNDEzMjAwNjUwMjUw.XLbeew.4-EvNJLFiPGMVoZ6s7pTnoqEObc");
     
     Cout() << "Debut programme\n";
@@ -73,6 +73,14 @@ CONSOLE_APP_MAIN {
 			json = ParseJSON(query.Execute());
         	bot.CreateMessage(channel,json["rating"]);
        
+        }else if (content.Find("!minecraft")!=-1 && id == "131915014419382272"){
+	        	content.Remove(0, 11);
+	        	String command = content;
+       		
+		  		bot.CreateMessage(channel, "Execution de la commande " + command +" sur le serveur minecraft");
+        		rcon.SendCommand(command);
+				bot.CreateMessage(channel, "Commande envoyée !");
+       
         }//------------------ MAJ des stats d'un BattleTag ---------------------- 
         else if(content.Find("!upd")!=-1){
             S_SESSION rowSession;
@@ -93,6 +101,7 @@ CONSOLE_APP_MAIN {
 					return;
 				}
             }
+           //------------------ MAJ des stats
             else{//Commande = !upd NattyRoots-21691
                 content.Remove(0, 5);
                 battletag = content;
