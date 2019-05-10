@@ -138,7 +138,7 @@ CONSOLE_APP_MAIN {
 			}
 			
     	}
-    	else if(content.Find("!leaderboard")){
+    	else if(content.Find("!leaderboard") != -1){
     		Sql sqlSelect;
     		S_SESSION rowSession;
     		
