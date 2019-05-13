@@ -8,9 +8,15 @@ uses
 	RconManager;
 
 file
-	schema.sch,
+	SmartBotUpp.h,
+	SmartBotUpp.cpp,
+	Overwatch readonly separator,
+	overwatch.cpp,
+	overwatch.h,
+	corbeille readonly separator,
 	sql_lite.h,
-	SmartBotUpp.cpp;
+	schema.sch,
+	archive.archive;
 
 mainconfig
 	"" = "",
