@@ -6,7 +6,7 @@
 using namespace Upp;
 
 /* 
-Project created 01/18/2019 
+Project created 14/05/2019
 By Clément Hamon 
 Lib used to give life to the Smartest bot ever ! (not even joking)
 This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it

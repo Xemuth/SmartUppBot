@@ -6,6 +6,8 @@ uses
 	Discord_Overwatch;
 
 file
+	main.cpp,
+	SmartBotUpp readonly separator,
 	SmartBotUpp.h,
 	SmartBotUpp.cpp,
 	DiscordUpp readonly separator,
