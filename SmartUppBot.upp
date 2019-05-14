@@ -3,20 +3,14 @@ description "Smart Bot Discord made with UPP !\377";
 uses
 	Core,
 	Core/SSL,
-	DiscordUpp,
-	plugin/sqlite3,
-	RconManager;
+	Discord_Overwatch;
 
 file
 	SmartBotUpp.h,
 	SmartBotUpp.cpp,
-	Overwatch readonly separator,
-	overwatch.cpp,
-	overwatch.h,
-	corbeille readonly separator,
-	sql_lite.h,
-	schema.sch,
-	archive.archive;
+	DiscordUpp readonly separator,
+	Discord.h,
+	Discord.cpp;
 
 mainconfig
 	"" = "",

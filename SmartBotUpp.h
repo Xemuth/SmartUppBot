@@ -5,12 +5,21 @@
 #include <DiscordUpp/Discord.h>
 using namespace Upp;
 
-class SmartBotUpp;
-class DiscordModule;
-
+/* 
+Project created 01/18/2019 
+By Clément Hamon 
+Lib used to give life to the Smartest bot ever ! (not even joking)
+This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it
+http://www.ultimatepp.org
+Copyright © 1998, 2019 Ultimate++ team
+All those sources are contained in "plugin" directory. Refer there for licenses, however all libraries have BSD-compatible license.
+Ultimate++ has BSD license:
+License : https://www.ultimatepp.org/app$ide$About$en-us.html
+Thanks to UPP team !
+*/
 class SmartBotUpp{
 	private: 
-		Upp::Vector<DiscordModule> AllModules;
+		Upp::Vector<void*> AllModules;
 		Discord bot;
 		
 		Upp::String name="";
@@ -21,20 +30,16 @@ class SmartBotUpp{
 	public:
 		SmartBotUpp(Upp::String _name, Upp::String _token);
 		void Launch();
-		void AddModule(DiscordModule &module);
-		void DeleteModule(DiscordModule &module);
+		void AddModule(void* module);
+		void DeleteModule(void* module);
 };
-
 
 class DiscordModule : Upp::Moveable<DiscordModule>{
-	private: 
-		Upp::String name="";
-		Upp::String prefixe = "";
-		void Event(Upp::String message);
 	public:
-		DiscordModule(Upp::String _name, Upp::String _prefixe );
-		
+		Upp::String name="";
+		Upp::String prefix="";
+		Upp::Vector<Event<ValueMap>> Events;
+	
+		virtual void Event(ValueMap payload);
 };
-
-
 #endif

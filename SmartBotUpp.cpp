@@ -1,24 +1,32 @@
 #include <Core/Core.h>
-
 #include <SmartUppBot/SmartBotUpp.h>
-#include <SmartUppBot/sql_lite.h>
-#include <RconManager/RconManager.h>
-#include <chrono>
+#include <Discord_Overwatch/Discord_Overwatch.h>
+#include <Discord_Minecraft/Discord_Minecraft.h>
 
-#ifdef _DEBUG
-#include <Sql/sch_schema.h>
-#endif
-
-#include <Sql/sch_source.h>
+/* 
+Project created 01/18/2019 
+By Clément Hamon 
+Lib used to give life to the Smartest bot ever ! (not even joking)
+This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it
+http://www.ultimatepp.org
+Copyright © 1998, 2019 Ultimate++ team
+All those sources are contained in "plugin" directory. Refer there for licenses, however all libraries have BSD-compatible license.
+Ultimate++ has BSD license:
+License : https://www.ultimatepp.org/app$ide$About$en-us.html
+Thanks to UPP team !
+*/
 
 using namespace Upp;
 
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
-	
 	SmartBotUpp mybot("314391413200650250","MzE0MzkxNDEzMjAwNjUwMjUw.XLbeew.4-EvNJLFiPGMVoZ6s7pTnoqEObc");
-	DiscordModule ow("Overwatch");
-	mybot.AddModule(ow);
+	
+	Discord_Overwatch ow("OverWatch","ow");
+	mybot.AddModule(&ow);
+	
+	Discord_Minecraft mc("Minecraft","mc");
+	mybot.AddModule(&mc);
 	
 	mybot.Launch();
 }	
@@ -36,13 +44,13 @@ void SmartBotUpp::Launch(){
 	bot.Listen();
 }
 
-void SmartBotUpp::AddModule(DiscordModule &module){
+void SmartBotUpp::AddModule(void* module){
 	AllModules.Add(module);
 }
 
-void SmartBotUpp::DeleteModule(DiscordModule &module){
+void SmartBotUpp::DeleteModule(void* module){
 	int cpt = 0;
-	for (DiscordModule &e: AllModules){
+	for (void* &e: AllModules){
 		if(&e == &module){
 			AllModules.Remove(cpt);
 			break;
@@ -58,15 +66,13 @@ void SmartBotUpp::Event(ValueMap payload){
     String id = payload["d"]["author"]["id"];
     String discriminator = payload["d"]["author"]["discriminator"];
     
-    Cout() << "Event : " << channel << "\n";
-    
+    for(auto &e : AllModules){
+     	((DiscordModule*) e)->Event(payload);
+    }
+
 }
 
-void DiscordModule::Event(Upp::String message){
-	Cout() <<"Event trigerred"<<"\n";
-}	
-DiscordModule::DiscordModule(Upp::String _name, Upp::String _prefixe ){
-	name= _name;
-	prefixe =_namme;
+void DiscordModule::Event(ValueMap payload){
 }
+
 
