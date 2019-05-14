@@ -17,21 +17,23 @@ Ultimate++ has BSD license:
 License : https://www.ultimatepp.org/app$ide$About$en-us.html
 Thanks to UPP team !
 */
+class DiscordModule;
 class SmartBotUpp{
 	private: 
-		Upp::Vector<void*> AllModules;
+		Upp::Vector<DiscordModule*> AllModules;
 		Discord bot;
 		
 		Upp::String name="";
 		Upp::String token="";
 		
 		void Event(ValueMap payload);
-	
+		Discord* getBotPtr();
 	public:
 		SmartBotUpp(Upp::String _name, Upp::String _token);
+		
 		void Launch();
-		void AddModule(void* module);
-		void DeleteModule(void* module);
+		void AddModule(DiscordModule* module);
+		void DeleteModule(DiscordModule* module);
 };
 
 class DiscordModule : Upp::Moveable<DiscordModule>{
@@ -39,7 +41,9 @@ class DiscordModule : Upp::Moveable<DiscordModule>{
 		Upp::String name="";
 		Upp::String prefix="";
 		Upp::Vector<Event<ValueMap>> Events;
+		Discord* ptrBot;
 	
+		bool goodPrefix(Upp::String prefixToTest);
 		virtual void Event(ValueMap payload);
 };
 #endif

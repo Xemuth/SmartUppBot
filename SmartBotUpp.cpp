@@ -29,13 +29,18 @@ void SmartBotUpp::Launch(){
 	bot.Listen();
 }
 
-void SmartBotUpp::AddModule(void* module){
+void SmartBotUpp::AddModule(DiscordModule* module){
+	module->ptrBot = getBotPtr();
 	AllModules.Add(module);
 }
 
-void SmartBotUpp::DeleteModule(void* module){
+Discord* SmartBotUpp::getBotPtr(){
+	return &bot;	
+}
+
+void SmartBotUpp::DeleteModule(DiscordModule* module){
 	int cpt = 0;
-	for (void* &e: AllModules){
+	for (DiscordModule* &e: AllModules){
 		if(&e == &module){
 			AllModules.Remove(cpt);
 			break;
@@ -51,13 +56,24 @@ void SmartBotUpp::Event(ValueMap payload){
     String id = payload["d"]["author"]["id"];
     String discriminator = payload["d"]["author"]["discriminator"];
     
-    for(auto &e : AllModules){
-     	((DiscordModule*) e)->Event(payload);
+    String prefixe =~payload["d"]["content"];
+    try{
+	    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
+	    Cout() << prefixe <<"\n";
+	    prefixe.Replace("!","");
+	    for(auto &e : AllModules){
+	       	if(((DiscordModule*) e)->goodPrefix(prefixe))
+	     		((DiscordModule*) e)->Event(payload);
+	    }
+    }catch(...){
+     	bot.CreateMessage(channel, "Commande inconnue !");
     }
-
 }
 
 void DiscordModule::Event(ValueMap payload){
 }
 
+bool DiscordModule::goodPrefix(Upp::String prefixToTest){
+	return !ToUpperAscii(prefix).Compare(ToUpper(prefixToTest));
+}
 
