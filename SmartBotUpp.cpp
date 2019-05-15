@@ -1,6 +1,5 @@
 #include <Core/Core.h>
 #include <SmartUppBot/SmartBotUpp.h>
-
 /* 
 Project created 14/05/2019
 By Clément Hamon 
@@ -63,14 +62,14 @@ void SmartBotUpp::Event(ValueMap payload){
 	    prefixe.Replace("!","");
 	    for(auto &e : AllModules){
 	       	if(((DiscordModule*) e)->goodPrefix(prefixe))
-	     		((DiscordModule*) e)->Event(payload);
+	     		((DiscordModule*) e)->Events(payload);
 	    }
     }catch(...){
      	bot.CreateMessage(channel, "Commande inconnue !");
     }
 }
 
-void DiscordModule::Event(ValueMap payload){
+void DiscordModule::Events(ValueMap payload){
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){

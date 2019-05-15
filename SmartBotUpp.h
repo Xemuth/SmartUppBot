@@ -2,7 +2,7 @@
 #define _SmartUppBot_SmartBotUpp_h_
 
 #include <Core/Core.h>
-#include <DiscordUpp/Discord.h>
+#include "Discord.h"
 using namespace Upp;
 
 /* 
@@ -40,10 +40,10 @@ class DiscordModule : Upp::Moveable<DiscordModule>{
 	public:
 		Upp::String name="";
 		Upp::String prefix="";
-		Upp::Vector<Event<ValueMap>> Events;
+		Upp::Vector<Event<ValueMap>> EventsMap;
 		Discord* ptrBot;
 	
 		bool goodPrefix(Upp::String prefixToTest);
-		virtual void Event(ValueMap payload);
+		virtual void Events(ValueMap payload);
 };
 #endif
