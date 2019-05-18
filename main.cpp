@@ -12,7 +12,7 @@ using namespace Upp;
 //Module DrawPackage : https://github.com/Xemuth/Discord_DrawPackage
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
-	SmartBotUpp mybot("314391413200650250","MzE0MzkxNDEzMjAwNjUwMjUw.XLbeew.4-EvNJLFiPGMVoZ6s7pTnoqEObc");
+	SmartBotUpp mybot(bot Id,discord Token);
 	
 	Discord_Overwatch ow("OverWatch","ow");
 	mybot.AddModule(&ow);
