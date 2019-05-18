@@ -6,8 +6,10 @@ using namespace Upp;
 
 #include <Discord_Overwatch/Discord_Overwatch.h>
 #include <Discord_Minecraft/Discord_Minecraft.h>
+#include <Discord_DrawPackage/Discord_DrawPackage.h>
 //Module OverWatch : https://github.com/Xemuth/Discord_Overwatch
 //Module Minecraft : https://github.com/Xemuth/Discord_Minecraft
+//Module DrawPackage :
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
 	SmartBotUpp mybot("314391413200650250","MzE0MzkxNDEzMjAwNjUwMjUw.XLbeew.4-EvNJLFiPGMVoZ6s7pTnoqEObc");
@@ -17,6 +19,9 @@ CONSOLE_APP_MAIN {
 	
 	Discord_Minecraft mc("Minecraft","mc");
 	mybot.AddModule(&mc);
+	
+	Discord_DrawPackage dr("Draw","d");
+	mybot.AddModule(&dr);
 	
 	mybot.Launch();
 }	

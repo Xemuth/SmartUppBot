@@ -3,7 +3,8 @@ description "Smart Bot Discord made with UPP !\377";
 uses
 	Core,
 	Core/SSL,
-	Discord_Overwatch;
+	Discord_Overwatch,
+	Discord_DrawPackage;
 
 file
 	main.cpp,
@@ -15,6 +16,6 @@ file
 	Discord.cpp;
 
 mainconfig
-	"" = "",
+	"" = "DEBUG",
 	"" = "F";
 

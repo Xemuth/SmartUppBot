@@ -74,6 +74,6 @@ void DiscordModule::Event(ValueMap payload){
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){
-	return !ToUpperAscii(prefix).Compare(ToUpper(prefixToTest));
+	return !ToUpperAscii(prefix).Compare(ToUpper(prefixToTest)); //Must be override if you want disable prefix checking and set event to a single prefix commande
 }
 
