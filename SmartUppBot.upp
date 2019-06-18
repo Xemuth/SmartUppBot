@@ -4,7 +4,8 @@ uses
 	Core,
 	Core/SSL,
 	Discord_Overwatch,
-	Discord_DrawPackage;
+	GraphBuilder,
+	EasyConfiguration;
 
 file
 	main.cpp,

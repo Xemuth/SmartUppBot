@@ -91,6 +91,7 @@ namespace Upp {
         void SendFile(String channel, String message, String title, String fileName);
         void BulkDeleteMessages(String channel, int count);
         void CreateMessage(String channel, String message);
+        void SendPrivateMessage();
         void Listen();
         
         void SetName(Upp::String _name);
