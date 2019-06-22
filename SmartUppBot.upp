@@ -18,5 +18,5 @@ file
 
 mainconfig
 	"" = "DEBUG",
-	"" = "F";
+	"" = "";
 
