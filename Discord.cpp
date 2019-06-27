@@ -10,8 +10,6 @@ Here it his Github : https://github.com/BornTactical/DiscordUpp
 
 Special thanks to him !
 */
-
-
 namespace Upp {
     void Discord::ApplyRateLimits(HttpRequest& req) {
         int Limit     = StrInt(req.GetHeader("x-ratelimit-limit"));

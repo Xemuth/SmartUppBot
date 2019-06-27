@@ -49,27 +49,37 @@ void SmartBotUpp::DeleteModule(DiscordModule* module){
 }
 
 void SmartBotUpp::Event(ValueMap payload){
-	String channel  = payload["d"]["channel_id"];
     String content  = payload["d"]["content"];
-    String userName = payload["d"]["author"]["username"];
-    String id = payload["d"]["author"]["id"];
-    String discriminator = payload["d"]["author"]["discriminator"];
-    
     String prefixe =~payload["d"]["content"];
     try{
 	    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
 	    Cout() << prefixe <<"\n";
 	    prefixe.Replace("!","");
 	    for(auto &e : AllModules){
-	       	if(((DiscordModule*) e)->goodPrefix(prefixe))
-	     		((DiscordModule*) e)->Events(payload);
+	       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
+	       			((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
+					((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
+					((DiscordModule*) e)->SetMessage( payload["d"]["content"]);
+					content.Replace(String("!" +prefixe +" "),"");
+					((DiscordModule*) e)->SetMessageArgs( Split(content," "));
+				   ((DiscordModule*) e)->EventsMessageCreated(payload);
+	       	}		
 	    }
     }catch(...){
-     	bot.CreateMessage(channel, "Commande inconnue !");
+     	bot.CreateMessage(payload["d"]["channel_id"], "Commande inconnue !");
     }
 }
 
-void DiscordModule::Events(ValueMap payload){
+void DiscordModule::EventsMessageCreated(ValueMap payload){
+}
+
+void DiscordModule::SetChannelLastMessage(Upp::String _ChannelLastMessage){ChannelLastMessage = _ChannelLastMessage;}
+void DiscordModule::SetAuthorId(Upp::String _AuthorId){AuthorId =_AuthorId;}
+void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
+void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
+	MessageArgs.Clear();
+	MessageArgs.Append(_Args);
+	ToLower(MessageArgs[0]);
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){

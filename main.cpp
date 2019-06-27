@@ -1,18 +1,16 @@
 #include <Core/Core.h>
 #include "SmartBotUpp.h"
-#include <EasyConfiguration/EasyConfiguration.h>
-using namespace Upp;
-
 
 #include <Discord_Overwatch/Discord_Overwatch.h>
+#include <EasyConfiguration/EasyConfiguration.h>
 #include <Discord_Minecraft/Discord_Minecraft.h>
 #include <GraphBuilder/GraphBuilder.h>
+using namespace Upp;
 //Module OverWatch : https://github.com/Xemuth/Discord_Overwatch
 //Module Minecraft : https://github.com/Xemuth/Discord_Minecraft
-//Module GraphBuilder : https://github.com/Xemuth/Discord_DrawPackage
-/*
-	EasyConfiguration : https://github.com/Xemuth/EasyConfiguration
-*/
+//Module GraphBuilder : https://github.com/Xemuth/GraphBuilder
+//EasyConfiguration : https://github.com/Xemuth/EasyConfiguration
+
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
 	EasyConfiguration ez(R"(C:\Upp\myapps\discordTokens.txt)");
@@ -23,12 +21,9 @@ CONSOLE_APP_MAIN {
 	
 	Discord_Minecraft mc("Minecraft","mc");
 	mybot.AddModule(&mc);
-	
-	Discord_DrawPackage dr("Draw","d");
-	mybot.AddModule(&dr);
-	
+
 	mybot.Launch();
-}	
+}
 
 /* 
 Project created 14/05/2019

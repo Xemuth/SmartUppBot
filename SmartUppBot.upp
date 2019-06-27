@@ -1,4 +1,4 @@
-description "Smart Bot Discord made with UPP !\377";
+description "Smart Bot Discord made with UPP !\377BI0,0,0";
 
 uses
 	Core,
