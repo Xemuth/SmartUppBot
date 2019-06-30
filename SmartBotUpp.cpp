@@ -79,7 +79,7 @@ void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
 void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	MessageArgs.Clear();
 	MessageArgs.Append(_Args);
-	ToLower(MessageArgs[0]);
+	MessageArgs[0] =ToLower(MessageArgs[0]);
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){
