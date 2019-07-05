@@ -57,12 +57,13 @@ void SmartBotUpp::Event(ValueMap payload){
 	    prefixe.Replace("!","");
 	    for(auto &e : AllModules){
 	       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
-	       			((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
-					((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
-					((DiscordModule*) e)->SetMessage( payload["d"]["content"]);
-					content.Replace(String("!" +prefixe +" "),"");
-					((DiscordModule*) e)->SetMessageArgs( Split(content," "));
-				   ((DiscordModule*) e)->EventsMessageCreated(payload);
+				((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
+				((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
+				
+				content.Replace(String("!" +prefixe +" "),"");
+				((DiscordModule*) e)->SetMessage(content);
+				((DiscordModule*) e)->SetMessageArgs( Split(content," "));
+				((DiscordModule*) e)->EventsMessageCreated(payload);
 	       	}		
 	    }
     }catch(...){
