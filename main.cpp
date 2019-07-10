@@ -13,13 +13,13 @@ using namespace Upp;
 
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
-	EasyConfiguration ez(R"(C:\Upp\myapps\discordTokens.txt)");
-//	EasyConfiguration ez(R"(/home/xemuth/token.cfg)");
+//	EasyConfiguration ez(R"(C:\Upp\myapps\discordTokens.txt)");
+	EasyConfiguration ez(R"(/home/xemuth/token.cfg)");
 	SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
 	
 	Discord_Overwatch ow("OverWatch","ow");
 	mybot.AddModule(&ow);
-	
+
 	Discord_Minecraft mc("Minecraft","mc");
 	mybot.AddModule(&mc);
 
