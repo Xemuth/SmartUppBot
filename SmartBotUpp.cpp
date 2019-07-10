@@ -49,27 +49,38 @@ void SmartBotUpp::DeleteModule(DiscordModule* module){
 }
 
 void SmartBotUpp::Event(ValueMap payload){
-    String content  = payload["d"]["content"];
-    String prefixe =~payload["d"]["content"];
-    try{
-	    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
-	    Cout() << prefixe <<"\n";
-	    prefixe.Replace("!","");
-	    for(auto &e : AllModules){
-	       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
-				((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
-				((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
-				
-				content.Replace(String("!" +prefixe +" "),"");
-				((DiscordModule*) e)->SetMessage(content);
-				((DiscordModule*) e)->SetMessageArgs( Split(content," "));
-				((DiscordModule*) e)->EventsMessageCreated(payload);
-	       	}		
-	    }
-    }catch(...){
-     	bot.CreateMessage(payload["d"]["channel_id"], "Commande inconnue !");
+    Vector<String> command;
+    if ((~payload["d"]["content"]).Find(";") != -1){
+    	command = Split((~payload["d"]["content"]),";");
+    }else{
+        command.Add((~payload["d"]["content"]));
     }
+    for(String &s : command){
+        if(s.GetCount()> 0){
+	        String content =s;
+	        String prefixe =s;
+	        try{
+		    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
+		    Cout() << prefixe <<"\n";
+		    prefixe.Replace("!","");
+		    for(auto &e : AllModules){
+		       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
+					((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
+					((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
+					content.Replace(String("!" +prefixe +" "),"");
+					((DiscordModule*) e)->SetMessage(content);
+					if(content.Find(" ") !=-1)((DiscordModule*) e)->SetMessageArgs( Split(content," "));
+					((DiscordModule*) e)->EventsMessageCreated(payload);
+		       	}		
+			}
+		    }catch(...){
+		     	bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
+		    }
+        }
+	}
 }
+   
+
 
 void DiscordModule::EventsMessageCreated(ValueMap payload){
 }
