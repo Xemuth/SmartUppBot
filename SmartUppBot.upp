@@ -5,7 +5,8 @@ uses
 	Core/SSL,
 	Discord_Overwatch,
 	GraphBuilder,
-	EasyConfiguration;
+	EasyConfiguration,
+	Discord_RNG;
 
 file
 	main.cpp,

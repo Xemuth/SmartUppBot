@@ -4,6 +4,7 @@
 #include <Discord_Overwatch/Discord_Overwatch.h>
 #include <EasyConfiguration/EasyConfiguration.h>
 #include <Discord_Minecraft/Discord_Minecraft.h>
+#include <Discord_RNG/Discord_RNG.h>
 #include <GraphBuilder/GraphBuilder.h>
 using namespace Upp;
 //Module OverWatch : https://github.com/Xemuth/Discord_Overwatch
@@ -13,7 +14,7 @@ using namespace Upp;
 
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
-	EasyConfiguration ez(R"(/home/xemuth/token.cfg)");
+	EasyConfiguration ez(R"(C:\UPP\upp-mingw-12999\MyApps\discordTokens.txt)");
 	SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
 	
 	Discord_Overwatch ow("OverWatch","ow");
@@ -22,6 +23,10 @@ CONSOLE_APP_MAIN {
 	Discord_Minecraft mc("Minecraft","mc");
 	mybot.AddModule(&mc);
 
+
+	Discord_RNG rng("RNG", "rng");
+	mybot.AddModule(&rng);
+	
 	mybot.Launch();
 }
 
