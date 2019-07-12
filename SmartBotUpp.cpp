@@ -65,6 +65,7 @@ void SmartBotUpp::Event(ValueMap payload){
 		    prefixe.Replace("!","");
 		    for(auto &e : AllModules){
 		       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
+		       		((DiscordModule*) e)->ClearMessageArgs();
 					((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
 					((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
 					content.Replace(String("!" +prefixe +" "),"");
@@ -97,6 +98,9 @@ void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	MessageArgs.Clear();
 	MessageArgs.Append(_Args);
 	MessageArgs[0] =ToLower(MessageArgs[0]);
+}
+void DiscordModule::ClearMessageArgs(){
+	MessageArgs.Clear();
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){

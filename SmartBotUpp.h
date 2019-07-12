@@ -48,7 +48,7 @@ class DiscordModule : Upp::Moveable<DiscordModule>{
 		void SetAuthorId(Upp::String _AuthorId);
 		void SetMessage(Upp::String _Message);
 		void SetMessageArgs(const Upp::Vector<String>& _Args);
-		
+		void ClearMessageArgs();
 		Upp::String name="";
 		Upp::String prefix="";
 		Upp::Vector<Event<ValueMap>> EventsMapMessageCreated;

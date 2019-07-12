@@ -9,20 +9,21 @@
 using namespace Upp;
 //Module OverWatch : https://github.com/Xemuth/Discord_Overwatch
 //Module Minecraft : https://github.com/Xemuth/Discord_Minecraft
+//Module RNG : https://github.com/Xemuth/Discord_RNG
 //Module GraphBuilder : https://github.com/Xemuth/GraphBuilder
 //EasyConfiguration : https://github.com/Xemuth/EasyConfiguration
 
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
-	EasyConfiguration ez(R"(C:\UPP\upp-mingw-12999\MyApps\discordTokens.txt)");
+	EasyConfiguration ez(R"(/home/xemuth/token.cfg)");
 	SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
-	/*
+	
 	Discord_Overwatch ow("OverWatch","ow");
 	mybot.AddModule(&ow);
 
 	Discord_Minecraft mc("Minecraft","mc");
 	mybot.AddModule(&mc);
-*/
+
 
 	Discord_RNG rng("RNG", "rng");
 	mybot.AddModule(&rng);
