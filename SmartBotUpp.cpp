@@ -69,7 +69,12 @@ void SmartBotUpp::Event(ValueMap payload){
 					((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
 					content.Replace(String("!" +prefixe +" "),"");
 					((DiscordModule*) e)->SetMessage(content);
-					if(content.Find(" ") !=-1)((DiscordModule*) e)->SetMessageArgs( Split(content," "));
+					if(content.Find(" ") !=-1){
+						((DiscordModule*) e)->SetMessageArgs( Split(content," "));
+					}
+					else{
+						((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});
+					}
 					((DiscordModule*) e)->EventsMessageCreated(payload);
 		       	}		
 			}
