@@ -15,20 +15,24 @@ using namespace Upp;
 
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
-	EasyConfiguration ez(R"(/home/xemuth/token.cfg)");
-	SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
+	EasyConfiguration ez(R"(/home/clement/token.cfg)");
+	if(ez.GetCount() >= 2){
+		SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
 	
-	Discord_Overwatch ow("OverWatch","ow");
-	mybot.AddModule(&ow);
-
-	Discord_Minecraft mc("Minecraft","mc");
-	mybot.AddModule(&mc);
-
-
-	Discord_RNG rng("RNG", "rng");
-	mybot.AddModule(&rng);
+		Discord_Overwatch ow("OverWatch","ow");
+		mybot.AddModule(&ow);
 	
-	mybot.Launch();
+		Discord_Minecraft mc("Minecraft","mc");
+		mybot.AddModule(&mc);
+	
+	
+		Discord_RNG rng("RNG", "rng");
+		mybot.AddModule(&rng);
+		
+		mybot.Launch();
+	}else{
+		LOG( "Le fichier de configuration est invalide !\n"); 	
+	}
 }
 
 /* 

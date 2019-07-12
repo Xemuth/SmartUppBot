@@ -80,7 +80,7 @@ namespace Upp {
                   //("shard", JsonArray() << 0 << 1)
                   ("presence",
                   Json("game",
-                       Json("name", "N/A")
+                       Json("name", "Tueur de camé Simulator")
                            ("type", 0))
                            ("status", "online")
                            ("since", int(Null))
@@ -221,21 +221,7 @@ namespace Upp {
         LOG(req.GetContent());
     }
     
-    void Discord::SendPrivateMessage(){
-        req.New();
 
-        String response =
-            req.Url(baseUrl)
-               .Path("/api/channels/@me")
-               .POST()
-               .Execute();
-               
-        LOG(response);
-        ValueMap m = ParseJSON(response);
-        ApplyRateLimits(req);
-        LOG(req.GetContent());
-        
-    }
     
     void Discord::SendFile(String channel, String message, String title, String fileName) {
         req.New();
@@ -351,7 +337,8 @@ namespace Upp {
 	        ObtainGatewayAddress();
     	}
     	else{
-    		Cout() << "Erreur, aucun token ni nom";
+    		LOG("Erreur, aucun token ni nom");
+    		Exit();
     	}
     }
     

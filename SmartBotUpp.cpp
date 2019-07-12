@@ -1,5 +1,6 @@
 #include <Core/Core.h>
 #include <SmartUppBot/SmartBotUpp.h>
+#include <GraphBuilder/GraphBuilder.h>
 /* 
 Project created 14/05/2019
 By Clément Hamon 
@@ -49,40 +50,66 @@ void SmartBotUpp::DeleteModule(DiscordModule* module){
 }
 
 void SmartBotUpp::Event(ValueMap payload){
-    Vector<String> command;
-    if ((~payload["d"]["content"]).Find(";") != -1){
-    	command = Split((~payload["d"]["content"]),";");
-    }else{
-        command.Add((~payload["d"]["content"]));
-    }
-    for(String &s : command){
-        if(s.GetCount()> 0){
-	        String content =s;
-	        String prefixe =s;
-	        try{
-		    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
-		    Cout() << prefixe <<"\n";
-		    prefixe.Replace("!","");
-		    for(auto &e : AllModules){
-		       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
-		       		((DiscordModule*) e)->ClearMessageArgs();
-					((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
-					((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
-					content.Replace(String("!" +prefixe +" "),"");
-					((DiscordModule*) e)->SetMessage(content);
-					if(content.Find(" ") !=-1){
-						((DiscordModule*) e)->SetMessageArgs( Split(content," "));
+	
+	if((~payload["d"]["content"])[0]  == '!' && !(~payload["d"]["author"]["id"]).IsEqual(name)){
+		bool resolved =false;
+	    Vector<String> command;
+	    if ((~payload["d"]["content"]).Find(";") != -1){
+	    	command = Split((~payload["d"]["content"]),";");
+	    }else{
+	        command.Add((~payload["d"]["content"]));
+	    }
+	    for(String &s : command){
+	        if(s.GetCount()> 0){
+		        String content =s;
+		        String prefixe =s;
+		        try{
+			    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
+			    prefixe.Replace("!","");
+			    
+			    for(auto &e : AllModules){
+			       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
+			       		((DiscordModule*) e)->ClearMessageArgs();
+						((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
+						((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
+						content.Replace(String("!" +prefixe +" "),"");
+						((DiscordModule*) e)->SetMessage(content);
+						if(content.Find(" ") !=-1){
+							((DiscordModule*) e)->SetMessageArgs( Split(content," "));
+						}
+						else{
+							((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});
+						}
+						((DiscordModule*) e)->EventsMessageCreated(payload);
+						resolved =true;
+						break;
+			       	}
+				}
+			    }catch(...){
+			        resolved =true;
+			     	bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
+			    }
+			    if(prefixe.IsEqual("delete")){
+			        content.Replace(String("!" + prefixe +" "),"");
+		        	if(content.Find(" ") !=-1){
+						auto buff = Split(content," ");
+						int deletion = atoi(buff[1]);
+						if(deletion > 10 ){
+							deletion =10;
+							bot.CreateMessage(payload["d"]["channel_id"], "Tststs tu ne peux supprimer que 10 messages par 10 messages !");
+						}
+						if(isStringisANumber(buff[1])) bot.BulkDeleteMessages(payload["d"]["channel_id"],atoi(buff[1]));
+						else bot.BulkDeleteMessages(payload["d"]["channel_id"],2);
 					}
 					else{
-						((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});
+						bot.BulkDeleteMessages(payload["d"]["channel_id"],2);
 					}
-					((DiscordModule*) e)->EventsMessageCreated(payload);
-		       	}		
-			}
-		    }catch(...){
-		     	bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
-		    }
-        }
+			    	resolved =true;
+			    	bot.CreateMessage(payload["d"]["channel_id"], "Supression effectuée !");
+			    }
+			    if(!resolved) bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
+	        }
+		}
 	}
 }
    
