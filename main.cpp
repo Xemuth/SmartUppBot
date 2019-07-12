@@ -19,7 +19,7 @@ CONSOLE_APP_MAIN {
 	
 	Discord_Overwatch ow("OverWatch","ow");
 	mybot.AddModule(&ow);
-	
+
 	Discord_Minecraft mc("Minecraft","mc");
 	mybot.AddModule(&mc);
 
