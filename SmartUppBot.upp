@@ -20,6 +20,6 @@ file
 	Discord.cpp;
 
 mainconfig
-	"" = "DEBUG",
+	"" = "DEBUG GRAPHBUILDER_DB",
 	"" = "LINUX";
 
