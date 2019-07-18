@@ -84,7 +84,7 @@ namespace Upp {
                   //("shard", JsonArray() << 0 << 1)
                   ("presence",
                   Json("game",
-                       Json("name", "Tueur de camé Simulator")
+                       Json("name", "vec ses couilles")
                            ("type", 0))
                            ("status", "online")
                            ("since", int(Null))
