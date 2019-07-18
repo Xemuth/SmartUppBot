@@ -96,7 +96,7 @@ namespace Upp {
         void SetName(Upp::String _name);
 	    void SetToken(Upp::String _token);
 	    void Start();
-        
+        void Trace();
         Discord();
         Discord(String configFile);
         Discord(String name, String token);

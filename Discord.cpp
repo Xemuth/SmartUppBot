@@ -39,6 +39,10 @@ namespace Upp {
         ws.SendTextMasked(json);
     }
     
+    void Discord::Trace(){
+    	ws.Trace(true);
+    }
+    
     void Discord::ObtainGatewayAddress() {
         req.New();
         String response = req.Url(baseUrl + "/api/gateway/bot").Execute();

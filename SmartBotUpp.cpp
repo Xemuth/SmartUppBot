@@ -16,6 +16,13 @@ Thanks to UPP team !
 
 using namespace Upp;
 
+String htmlEntitiesDecode(String s) {
+	auto toGet = Vector<String>
+	{"&amp;","&#039;","&apos;","&lt;","&gt;","&ccedil;","&ecirc;","&eacute;","&quot;","&agrave;","&icirc;","&ocirc;"};
+	auto toTransform = Vector<String>{"&","'","\"","<",">","ç","ê","é","\"","à","î","ô"};
+	return Replace(s,toGet,toTransform);
+}
+
 SmartBotUpp::SmartBotUpp(Upp::String _name, Upp::String _token){
 	name=_name;
 	token=_token;
@@ -47,6 +54,9 @@ void SmartBotUpp::DeleteModule(DiscordModule* module){
 		}
 		cpt++;
 	}
+}
+void SmartBotUpp::trace(){
+	bot.Trace();
 }
 
 void SmartBotUpp::Event(ValueMap payload){
@@ -106,6 +116,15 @@ void SmartBotUpp::Event(ValueMap payload){
 					}
 			    	resolved =true;
 			    	bot.CreateMessage(payload["d"]["channel_id"], "Supression effectuée !");
+			    }else if(prefixe.IsEqual("chuck")){
+			    	HttpRequest reqApi("https://chucknorrisfacts.fr/api/get?data=nb:1;type:txt;tri:alea");
+					reqApi.GET();
+					ValueMap json = ParseJSON(reqApi.Execute());
+					if(~json[0]["fact"].GetCount())
+						bot.CreateMessage(payload["d"]["channel_id"],htmlEntitiesDecode(~json[0]["fact"]) );
+					else 
+						bot.CreateMessage(payload["d"]["channel_id"], "C'est chuck qui décide...");
+					resolved =true;
 			    }
 			    if(!resolved) bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
 	        }

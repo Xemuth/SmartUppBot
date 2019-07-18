@@ -21,5 +21,6 @@ file
 
 mainconfig
 	"" = "DEBUG GRAPHBUILDER_DB",
-	"" = "LINUX";
+	"" = "LINUX",
+	"" = "";
 

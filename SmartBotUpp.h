@@ -30,6 +30,7 @@ class SmartBotUpp{
 		Discord* getBotPtr();
 	public:
 		SmartBotUpp(Upp::String _name, Upp::String _token);
+		void trace();
 		
 		void Launch();
 		void AddModule(DiscordModule* module);
