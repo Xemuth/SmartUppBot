@@ -18,7 +18,7 @@ CONSOLE_APP_MAIN {
 	EasyConfiguration ez(R"(C:/discordTokens.txt)");
 	if(ez.GetCount() >= 2){
 		SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
-		mybot.trace();
+		
 		Discord_Overwatch ow("OverWatch","ow");
 		mybot.AddModule(&ow);
 	
