@@ -74,31 +74,37 @@ void SmartBotUpp::Event(ValueMap payload){
 		        String content =s;
 		        String prefixe =s;
 		        try{
-			    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
-			    prefixe.Replace("!","");
-			    
-			    for(auto &e : AllModules){
-			       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
-			       		((DiscordModule*) e)->ClearMessageArgs();
-						((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
-						((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
-						content.Replace(String("!" +prefixe +" "),"");
-						((DiscordModule*) e)->SetMessage(content);
-						if(content.Find(" ") !=-1){
-							((DiscordModule*) e)->SetMessageArgs( Split(content," "));
-						}
-						else{
-							((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});
-						}
-						((DiscordModule*) e)->EventsMessageCreated(payload);
-						resolved =true;
-						break;
-			       	}
-				}
+				    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
+				    prefixe.Replace("!","");
+				    for(auto &e : AllModules){
+				       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
+				       		((DiscordModule*) e)->ClearMessageArgs();
+							((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
+							((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
+							((DiscordModule*) e)->SetMessage(content);
+							content.Replace(String("!" +prefixe +" "),"");
+							if(content.Find("(") == -1 || content.Find(")") == -1) break;
+							((DiscordModule*) e)->SetNameOfFunction(TrimBoth(content.Left(content.Find("("))));
+							content.Replace(content.Left(content.Find("(")),"");
+							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});
+							if(content.Find(",") !=-1){
+									((DiscordModule*) e)->SetMessageArgs(Split(content,","));	
+							}else if( TrimBoth(content).GetCount()>0){
+								((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});	
+							}
+							((DiscordModule*) e)->ShowInformation();
+							((DiscordModule*) e)->EventsMessageCreated(payload);
+							resolved =true;
+						//	break; Finalement plusieurs modules peuvent eventuellement répondre
+				       	}
+					}
 			    }catch(...){
 			        resolved =true;
 			     	bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
 			    }
+			    /*
+				prefixe = TrimBoth(prefixe.Left(prefixe.Find("(")));
+			    Cout() << prefixe <<"\n";
 			    if(prefixe.IsEqual("delete")){
 			        content.Replace(String("!" + prefixe +" "),"");
 		        	if(content.Find(" ") !=-1){
@@ -126,6 +132,7 @@ void SmartBotUpp::Event(ValueMap payload){
 						bot.CreateMessage(payload["d"]["channel_id"], "C'est chuck qui décide...");
 					resolved =true;
 			    }
+			    */
 			    if(!resolved) bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
 	        }
 		}
@@ -143,10 +150,25 @@ void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
 void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	MessageArgs.Clear();
 	MessageArgs.Append(_Args);
-	MessageArgs[0] =ToLower(MessageArgs[0]);
 }
+void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
+
 void DiscordModule::ClearMessageArgs(){
 	MessageArgs.Clear();
+}
+
+void DiscordModule::ShowInformation(){
+	String info ="";
+	info << "Channel : " << ChannelLastMessage <<"\n";
+	info << "Author ID : " << AuthorId <<"\n";
+ 	info << "Message : " << Message <<"\n";
+ 	info << "Name of Function : " << NameOfFunction <<"\n";
+	info << " Args : ";
+		for(String &t : MessageArgs){
+			info << t <<" ";	
+		}
+	info <<"\n";
+	Cout() << info <<"\n";
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){

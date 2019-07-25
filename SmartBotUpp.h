@@ -40,22 +40,31 @@ class SmartBotUpp{
 class DiscordModule : Upp::Moveable<DiscordModule>{
 	protected:
 		String ChannelLastMessage=""; //hook to latest message chan 
+		String NameOfFunction="";
+		Vector<String> MessageArgs;
+		
 	    String AuthorId =""; 
 	    String Message ="";
-		Vector<String> MessageArgs;
-	public:
 		
+	public:
 		void SetChannelLastMessage(Upp::String _ChannelLastMessage);
+		void ShowInformation();
+		
 		void SetAuthorId(Upp::String _AuthorId);
 		void SetMessage(Upp::String _Message);
+		
 		void SetMessageArgs(const Upp::Vector<String>& _Args);
+		void SetNameOfFunction(Upp::String functionName);
+		
 		void ClearMessageArgs();
+		
 		Upp::String name="";
 		Upp::String prefix="";
+		
 		Upp::Vector<Event<ValueMap>> EventsMapMessageCreated;
 		Discord* ptrBot;
 	
-		bool goodPrefix(Upp::String prefixToTest);
+		virtual bool goodPrefix(Upp::String prefixToTest);
 		virtual void EventsMessageCreated(ValueMap payload);
 };
 #endif
