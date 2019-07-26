@@ -88,7 +88,7 @@ void SmartBotUpp::Event(ValueMap payload){
 							content.Replace(content.Left(content.Find("(")),"");
 							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});
 							if(content.Find(",") !=-1){
-									((DiscordModule*) e)->SetMessageArgs(Split(content,","));	
+									((DiscordModule*) e)->SetMessageArgs(  Split(content,",")  );	
 							}else if( TrimBoth(content).GetCount()>0){
 								((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});	
 							}
@@ -150,6 +150,9 @@ void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
 void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	MessageArgs.Clear();
 	MessageArgs.Append(_Args);
+	for(String &str : MessageArgs){
+		str=TrimBoth(str);	
+	}
 }
 void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
 

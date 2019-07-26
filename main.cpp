@@ -25,8 +25,8 @@ CONSOLE_APP_MAIN {
 		Discord_Minecraft mc("Minecraft","mc");
 		mybot.AddModule(&mc);
 	
-		Discord_RNG rng("RNG", "rng");
-		mybot.AddModule(&rng);
+	//	Discord_RNG rng("RNG", "rng");
+	//	mybot.AddModule(&rng);
 		
 		mybot.Launch();
 	}else{
