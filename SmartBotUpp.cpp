@@ -33,7 +33,9 @@ SmartBotUpp::SmartBotUpp(Upp::String _name, Upp::String _token){
 
 void SmartBotUpp::Launch(){
 	bot.WhenMessageCreated =[&](ValueMap payload){this->Event(payload);};
-	bot.Listen();
+	for(;;){
+		bot.Listen();
+	}
 }
 
 void SmartBotUpp::AddModule(DiscordModule* module){
