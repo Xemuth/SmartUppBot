@@ -5,6 +5,7 @@
 #include <EasyConfiguration/EasyConfiguration.h>
 #include <Discord_Minecraft/Discord_Minecraft.h>
 #include <Discord_RNG/Discord_RNG.h>
+#include <Discord_Bot_Marley/Discord_Bot_Marley.h>
 
 using namespace Upp;
 //Module OverWatch : https://github.com/Xemuth/Discord_Overwatch
@@ -18,15 +19,21 @@ CONSOLE_APP_MAIN {
 	EasyConfiguration ez(R"(C:/discordTokens.txt)");
 	if(ez.GetCount() >= 2){
 		SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
-		
+		/*
 		Discord_Overwatch ow("OverWatch","ow");
 		mybot.AddModule(&ow);
 	
 		Discord_Minecraft mc("Minecraft","mc");
 		mybot.AddModule(&mc);
+<<<<<<< Updated upstream
 	
 	//	Discord_RNG rng("RNG", "rng");
 	//	mybot.AddModule(&rng);
+	*/
+		Discord_RNG rng("RNG", "rng");
+		mybot.AddModule(&rng);
+		
+		
 		
 		mybot.Launch();
 	}else{
