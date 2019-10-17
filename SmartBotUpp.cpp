@@ -75,6 +75,10 @@ void SmartBotUpp::Event(ValueMap payload){
 	        if(s.GetCount()> 0){
 		        String content =s;
 		        String prefixe =s;
+		        
+		        String Function = "";
+		        Vector<String> Args;
+		        
 		        try{
 				    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
 				    prefixe.Replace("!","");
@@ -87,12 +91,13 @@ void SmartBotUpp::Event(ValueMap payload){
 							content.Replace(String("!" +prefixe +" "),"");
 							if(content.Find("(") == -1 || content.Find(")") == -1) break;
 							((DiscordModule*) e)->SetNameOfFunction(TrimBoth(content.Left(content.Find("("))));
+							
 							content.Replace(content.Left(content.Find("(")),"");
 							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});
 							if(content.Find(",") !=-1){
 									((DiscordModule*) e)->SetMessageArgs(  Split(content,",")  );	
 							}else if( TrimBoth(content).GetCount()>0){
-								((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});	
+								((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});
 							}
 							((DiscordModule*) e)->ShowInformation();
 							((DiscordModule*) e)->EventsMessageCreated(payload);
@@ -100,9 +105,29 @@ void SmartBotUpp::Event(ValueMap payload){
 						//	break; Finalement plusieurs modules peuvent eventuellement répondre
 				       	}
 					}
+					if(!resolved){
+						if(Function.GetCount() == 0) Function = TrimBoth(content.Left(content.Find("(")));
+						Function.Replace("!","");
+						if(content.Find(",") !=-1){
+							if(Args.GetCount() ==0) Args.Append( Split(content,","));	
+						}else if( TrimBoth(content).GetCount()>0){
+							
+							if(Args.GetCount() ==0) Args.Append(Vector<String>{content});
+						}
+						if(ToLower(Function).IsEqual("modules")){
+							String modules = "";
+							bool first = false;
+							for(auto &e : AllModules){
+								modules += ((first)? ", ":"")+ e->name;
+								first = true;	
+							}
+							bot.CreateMessage(payload["d"]["channel_id"], "Les modules actuelles sont : " +modules);
+							resolved =true;
+						}
+					}
 			    }catch(...){
 			        resolved =true;
-			     	bot.CreateMessage(payload["d"]["channel_id"], s + " : Commande inconnue !");
+			     	
 			    }
 			    /*
 				prefixe = TrimBoth(prefixe.Left(prefixe.Find("(")));

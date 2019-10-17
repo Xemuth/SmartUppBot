@@ -1,11 +1,17 @@
 #include <Core/Core.h>
 #include "SmartBotUpp.h"
-
-#include <Discord_Overwatch/Discord_Overwatch.h>
 #include <EasyConfiguration/EasyConfiguration.h>
-#include <Discord_Minecraft/Discord_Minecraft.h>
-#include <Discord_RNG/Discord_RNG.h>
-#include <Discord_Bot_Marley/Discord_Bot_Marley.h>
+
+#ifdef flagOVERWATCH
+	#include <Discord_Overwatch/Discord_Overwatch.h>
+#endif
+#ifdef flagMINECRAFT
+	#include <Discord_Minecraft/Discord_Minecraft.h>
+#endif
+#ifdef flagRNG
+	#include <Discord_RNG/Discord_RNG.h>
+#endif
+
 
 using namespace Upp;
 //Module OverWatch : https://github.com/Xemuth/Discord_Overwatch
@@ -19,21 +25,21 @@ CONSOLE_APP_MAIN {
 	EasyConfiguration ez(R"(C:/discordTokens.txt)");
 	if(ez.GetCount() >= 2){
 		SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
-		/*
-		Discord_Overwatch ow("OverWatch","ow");
-		mybot.AddModule(&ow);
-	
-		Discord_Minecraft mc("Minecraft","mc");
-		mybot.AddModule(&mc);
-<<<<<<< Updated upstream
-	
-	//	Discord_RNG rng("RNG", "rng");
-	//	mybot.AddModule(&rng);
-	*/
-		Discord_RNG rng("RNG", "rng");
-		mybot.AddModule(&rng);
 		
+		#ifdef flagOVERWATCH
+			Discord_Overwatch ow("OverWatch","ow");
+			mybot.AddModule(&ow);
+		#endif
 		
+		#ifdef flagMINECRAFT
+			Discord_Minecraft mc("Minecraft","mc");
+			mybot.AddModule(&mc);
+		#endif
+		
+		#ifdef flagRNG
+			Discord_RNG rng("RNG", "rng");
+			mybot.AddModule(&rng);
+		#endif
 		
 		mybot.Launch();
 	}else{
