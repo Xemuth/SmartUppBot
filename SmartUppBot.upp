@@ -22,5 +22,6 @@ file
 mainconfig
 	"" = "DEBUG GRAPHBUILDER_DB",
 	"" = "LINUX",
-	"" = "MINECRAFT";
+	"" = "MINECRAFT",
+	"" = "";
 
