@@ -269,13 +269,11 @@ namespace Upp {
         if(shouldResume) {
             Resume();
             shouldResume = false;
-        }
-            
+        }    
         // Event loop
         for(;;) {
             BeforeSocketReceive();
             String response = ws.Receive();
-            
             if(ws.IsError()) {
                 LOG(ws.GetError());
                 return;
@@ -288,6 +286,9 @@ namespace Upp {
             
             ValueMap payload = ParseJSON(response);
             int op = payload["op"];
+            
+            
+            
             
             switch(op) {
                 case OP::DISPATCH:

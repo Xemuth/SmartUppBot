@@ -18,26 +18,67 @@ License : https://www.ultimatepp.org/app$ide$About$en-us.html
 Thanks to UPP team !
 */
 class DiscordModule;
+
+class SmartUppBotException : public std::exception { //classe to managed every exception
+	private:
+	    int m_numero;               //Id of Error
+	    Upp::String m_phrase;       //Error summaries
+	    int m_niveau;               //level of Error
+	    char* myChar=NULL;
+	public:
+		
+	    SmartUppBotException(int numero=0, Upp::String phrase="", int niveau=0){
+	        m_numero = numero;
+	        m_phrase = phrase;
+	        m_niveau = niveau;
+			myChar =  new char[m_phrase.GetCount()+1];
+	        strcpy(myChar,this->m_phrase.ToStd().c_str());
+	    }
+	    
+	    virtual const char* what() const throw() {
+			return  (const char *)  myChar;
+	    }
+	    int getNiveau() const throw(){
+			return m_niveau;
+	    }
+		virtual ~SmartUppBotException(){
+			delete [] myChar;
+		}
+};
+
 class SmartBotUpp{
 	private: 
-		Upp::Vector<DiscordModule*> AllModules;
+		Upp::Array<DiscordModule> AllModules;
 		Discord bot;
 		
 		Upp::String name="";
 		Upp::String token="";
 		
 		void Event(ValueMap payload);
-		Discord* getBotPtr();
+		Discord& getBot();
 	public:
-		SmartBotUpp(Upp::String _name, Upp::String _token);
-		void trace();
 		
+		SmartBotUpp(Upp::String _name, Upp::String _token);
+		
+		void trace();
 		void Launch();
-		void AddModule(DiscordModule* module);
-		void DeleteModule(DiscordModule* module);
+		
+		void DeleteModule(DiscordModule& module);
+		template <class T,class... Args>
+		T& CreateModule(Args&&... args){
+			T& module = AllModules.Create<T>(std::forward<Args>(args)...);
+			if(dynamic_cast<DiscordModule*>(&module)){
+				module.SetBotPtr(bot);
+				return module;
+			}
+			else{
+				AllModules.Remove(AllModules.GetCount()-1,1);
+				throw SmartUppBotException(6,"T& SmartBotUpp::CreateModule<type T>(...) => Invalide type not inherited from DiscordModule !",1);
+			}
+		}	
 };
 
-class DiscordModule : Upp::Moveable<DiscordModule>{
+class DiscordModule{
 	protected:
 		String ChannelLastMessage=""; //hook to latest message chan 
 		String NameOfFunction="";
@@ -45,7 +86,10 @@ class DiscordModule : Upp::Moveable<DiscordModule>{
 		
 	    String AuthorId =""; 
 	    String Message ="";
-		
+	    
+	    virtual void Help(ValueMap json);
+	    
+	    Discord* BotPtr;
 	public:
 		void SetChannelLastMessage(Upp::String _ChannelLastMessage);
 		void ShowInformation();
@@ -56,15 +100,21 @@ class DiscordModule : Upp::Moveable<DiscordModule>{
 		void SetMessageArgs(const Upp::Vector<String>& _Args);
 		void SetNameOfFunction(Upp::String functionName);
 		
+		void SetBotPtr(Discord& discord);
+		Discord* GetBotPtr();
+		
 		void ClearMessageArgs();
 		
 		Upp::String name="";
 		Upp::String prefix="";
 		
-		Upp::Vector<Event<ValueMap>> EventsMapMessageCreated;
-		Discord* ptrBot;
+		Upp::Array<Event<ValueMap>> EventsMapMessageCreated{ [&](ValueMap e){if(NameOfFunction.IsEqual("help"))this->Help(e);} };
+		
 	
 		virtual bool goodPrefix(Upp::String prefixToTest);
 		virtual void EventsMessageCreated(ValueMap payload);
 };
+
+
+
 #endif

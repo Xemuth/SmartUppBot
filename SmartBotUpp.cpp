@@ -38,18 +38,13 @@ void SmartBotUpp::Launch(){
 	}
 }
 
-void SmartBotUpp::AddModule(DiscordModule* module){
-	module->ptrBot = getBotPtr();
-	AllModules.Add(module);
+Discord& SmartBotUpp::getBot(){
+	return bot;	
 }
 
-Discord* SmartBotUpp::getBotPtr(){
-	return &bot;	
-}
-
-void SmartBotUpp::DeleteModule(DiscordModule* module){
+void SmartBotUpp::DeleteModule(DiscordModule& module){
 	int cpt = 0;
-	for (DiscordModule* &e: AllModules){
+	for (DiscordModule &e: AllModules){
 		if(&e == &module){
 			AllModules.Remove(cpt);
 			break;
@@ -83,24 +78,24 @@ void SmartBotUpp::Event(ValueMap payload){
 				    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
 				    prefixe.Replace("!","");
 				    for(auto &e : AllModules){
-				       	if(((DiscordModule*) e)->goodPrefix(prefixe)){
-				       		((DiscordModule*) e)->ClearMessageArgs();
-							((DiscordModule*) e)->SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
-							((DiscordModule*) e)->SetAuthorId(payload["d"]["author"]["id"]);
-							((DiscordModule*) e)->SetMessage(content);
+				       	if(e.goodPrefix(prefixe)){
+				       		e.ClearMessageArgs();
+							e.SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
+							e.SetAuthorId(payload["d"]["author"]["id"]);
+							e.SetMessage(content);
 							content.Replace(String("!" +prefixe +" "),"");
 							if(content.Find("(") == -1 || content.Find(")") == -1) break;
-							((DiscordModule*) e)->SetNameOfFunction(TrimBoth(content.Left(content.Find("("))));
+							e.SetNameOfFunction(TrimBoth(content.Left(content.Find("("))));
 							
 							content.Replace(content.Left(content.Find("(")),"");
 							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});
 							if(content.Find(",") !=-1){
-									((DiscordModule*) e)->SetMessageArgs(  Split(content,",")  );	
+									e.SetMessageArgs(  Split(content,",")  );	
 							}else if( TrimBoth(content).GetCount()>0){
-								((DiscordModule*) e)->SetMessageArgs(Vector<String>{content});
+								e.SetMessageArgs(Vector<String>{content});
 							}
-							((DiscordModule*) e)->ShowInformation();
-							((DiscordModule*) e)->EventsMessageCreated(payload);
+							e.ShowInformation();
+							e.EventsMessageCreated(payload);
 							resolved =true;
 						//	break; Finalement plusieurs modules peuvent eventuellement répondre
 				       	}
@@ -118,10 +113,10 @@ void SmartBotUpp::Event(ValueMap payload){
 							String modules = "";
 							bool first = false;
 							for(auto &e : AllModules){
-								modules += ((first)? ", ":"")+ e->name;
+								modules += ((first)? ", ":"")+ e.name;
 								first = true;	
 							}
-							bot.CreateMessage(payload["d"]["channel_id"], "Les modules actuelles sont : " +modules);
+							bot.CreateMessage(payload["d"]["channel_id"], "SmartUppBotV2 Les modules actuelles sont : " +modules);
 							resolved =true;
 						}
 					}
@@ -199,6 +194,17 @@ void DiscordModule::ShowInformation(){
 		}
 	info <<"\n";
 	Cout() << info <<"\n";
+}
+
+void DiscordModule::SetBotPtr(Discord& discord){
+	BotPtr = &discord;
+}
+Discord* DiscordModule::GetBotPtr(){
+	return BotPtr;
+}
+
+void DiscordModule::Help(ValueMap json){
+	BotPtr->CreateMessage(ChannelLastMessage, "This module have not implemented Help function yet !");
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){

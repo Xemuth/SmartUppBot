@@ -33,8 +33,7 @@ CONSOLE_APP_MAIN {
 		SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
 		
 		#ifdef flagOVERWATCH
-			Discord_Overwatch ow("OverWatch","ow");
-			mybot.AddModule(&ow);
+			mybot.CreateModule<Discord_Overwatch>("OverWatch","ow");
 		#endif
 		
 		#ifdef flagMINECRAFT
@@ -43,14 +42,11 @@ CONSOLE_APP_MAIN {
 			#else
 				String RconFile = R"(C:/rconLogs.txt)";
 			#endif
-			
-			Discord_Minecraft mc("Minecraft","mc",RconFile);
-			mybot.AddModule(&mc);
+			mybot.CreateModule<Discord_Minecraft>("Minecraft","mc",RconFile);
 		#endif
 		
 		#ifdef flagRNG
-			Discord_RNG rng("RNG", "rng");
-			mybot.AddModule(&rng);
+			mybot.CreateModule<Discord_RNG>("RNG", "rng");
 		#endif
 		
 		mybot.Launch();
