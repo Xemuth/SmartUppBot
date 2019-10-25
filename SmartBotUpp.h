@@ -54,6 +54,8 @@ class SmartBotUpp{
 		Upp::String name="";
 		Upp::String token="";
 		
+		Upp::String version = " ---------------- SmartUppBot -- V2.0.1 -- 25/10/2019 ----------------";
+		
 		void Event(ValueMap payload);
 		Discord& getBot();
 	public:

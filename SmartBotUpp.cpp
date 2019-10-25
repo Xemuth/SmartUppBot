@@ -116,7 +116,17 @@ void SmartBotUpp::Event(ValueMap payload){
 								modules += ((first)? ", ":"")+ e.name;
 								first = true;	
 							}
-							bot.CreateMessage(payload["d"]["channel_id"], "SmartUppBotV2 Les modules actuelles sont : " +modules);
+							bot.CreateMessage(payload["d"]["channel_id"], version+"\nLes modules actuelles sont : " +modules);
+							resolved =true;
+						}else if(ToLower(Function).IsEqual("help")){
+							String help = "```";
+							help <<  version+"\n\n";
+							help << "Pour obtenir l'aide des différents modules utilisez les commandes suivantes : " << "\n\n";
+							for(auto &e : AllModules){
+								help << "!" << e.prefix << " help()" << "\n\n";
+							}
+							help << "```";
+							bot.CreateMessage(payload["d"]["channel_id"], help);
 							resolved =true;
 						}
 					}

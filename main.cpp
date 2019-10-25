@@ -23,12 +23,12 @@ using namespace Upp;
 CONSOLE_APP_MAIN {
 	StdLogSetup(LOG_COUT|LOG_FILE);
 	#ifdef flagLINUX
-		String CfgFile = R"(/home/Xemuth/token.cfg)";
+		String CfgFile = R"(/home/xemuth/token.cfg)";
 	#else
 		String CfgFile = R"(C:/discordTokens.txt)";
 	#endif
 	
-	EasyConfiguration ez(R"(C:/discordTokens.txt)");
+	EasyConfiguration ez(CfgFile);
 	if(ez.GetCount() >= 2){
 		SmartBotUpp mybot(ez.GetValue<String>("BotId"),ez.GetValue<String>("BotToken"));
 		
@@ -38,7 +38,7 @@ CONSOLE_APP_MAIN {
 		
 		#ifdef flagMINECRAFT
 			#ifdef flagLINUX
-				String RconFile = R"(/home/Xemuth/rconLogs.cfg)";
+				String RconFile = R"(/home/xemuth/rconLogs.cfg)";
 			#else
 				String RconFile = R"(C:/rconLogs.txt)";
 			#endif
