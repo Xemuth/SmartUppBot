@@ -116,17 +116,43 @@ void SmartBotUpp::Event(ValueMap payload){
 								modules += ((first)? ", ":"")+ e.name;
 								first = true;	
 							}
-							bot.CreateMessage(payload["d"]["channel_id"], version+"\nLes modules actuelles sont : " +modules);
+							bot.CreateMessage(payload["d"]["channel_id"],"```"+ version+"\nLes modules actuelles sont : " +modules +"```");
 							resolved =true;
 						}else if(ToLower(Function).IsEqual("help")){
 							String help = "```";
 							help <<  version+"\n\n";
-							help << "Pour obtenir l'aide des différents modules utilisez les commandes suivantes : " << "\n\n";
+							help << "!Credit() "<<" -> Affiche les crédit de SmartUppBot.\n";
+							help << "!Modules()"<<" -> Affiche les modules actuellement chargé par SmartUppBot.\n\n";
+							help << "Pour obtenir l'aide des différents modules utilisez les commandes suivantes : " << "\n";
 							for(auto &e : AllModules){
-								help << "!" << e.prefix << " help()" << "\n\n";
+								help << "!" << e.prefix << " Help()" << "\n";
+							}
+							help << "\nPour afficher les crédits des différents modules utilisez les commandes suivantes : " << "\n";
+							for(auto &e : AllModules){
+								help << "!" << e.prefix << " Credit()" << "\n";
 							}
 							help << "```";
 							bot.CreateMessage(payload["d"]["channel_id"], help);
+							resolved =true;
+						}else if(ToLower(Function).IsEqual("credit")){
+							String credit = "```";
+							credit <<  version+"\n\n";
+							credit << "SmartUppBot Copyright (C) 2019 Clément Hamon\n\n";
+							credit << "Lib used to give life to the Smartest discord bot ever ! (not even joking)\n";
+							credit << "This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it\n";
+							credit << "http://www.ultimatepp.org\n";
+							credit << "Copyright © 1998, 2019 Ultimate++ team\n";
+							credit << "All those sources are contained in 'plugin' directory. Refer there for licenses, however all libraries have BSD-compatible license.\n";
+							credit << "Ultimate++ has BSD license:\n";
+							credit << "License : https://www.ultimatepp.org/app$ide$About$en-us.html\n";
+							credit << "Thanks to UPP team !\n";
+							credit << "Special thanks to jjacksonRIAB !\n\n";
+							for(auto &e : AllModules){
+								credit << "Credit of " + e.name + " module :\n";
+								credit << e.Credit(payload,false) <<"\n\n";
+							}
+							credit << "```";
+							bot.CreateMessage(payload["d"]["channel_id"], credit);
 							resolved =true;
 						}
 					}
@@ -214,7 +240,13 @@ Discord* DiscordModule::GetBotPtr(){
 }
 
 void DiscordModule::Help(ValueMap json){
-	BotPtr->CreateMessage(ChannelLastMessage, "This module have not implemented Help function yet !");
+	BotPtr->CreateMessage(ChannelLastMessage, "```This module have not implemented Help function yet !```");
+}
+
+String DiscordModule::Credit(ValueMap json,bool sendCredit){
+	String credit =  "This module have been made by a stanger !";
+	if(sendCredit) BotPtr->CreateMessage(ChannelLastMessage,"```"+credit +"```");
+	return credit;
 }
 
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){

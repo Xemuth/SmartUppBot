@@ -263,7 +263,7 @@ namespace Upp {
     
     void Discord::Listen() {
         ws.Connect(gatewayAddr, "gateway.discord.gg", true, 443);
-            
+           ws.Trace(); 
         // A reconnect event was received, so resuming the session to play back
         // whatever events were sent when the client was down
         if(shouldResume) {

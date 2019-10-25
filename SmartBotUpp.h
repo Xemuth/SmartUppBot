@@ -89,10 +89,11 @@ class DiscordModule{
 	    String AuthorId =""; 
 	    String Message ="";
 	    
-	    virtual void Help(ValueMap json);
-	    
 	    Discord* BotPtr;
 	public:
+		virtual void Help(ValueMap json);
+	    virtual String Credit(ValueMap json,bool sendCredit = true);
+		
 		void SetChannelLastMessage(Upp::String _ChannelLastMessage);
 		void ShowInformation();
 		
@@ -110,7 +111,10 @@ class DiscordModule{
 		Upp::String name="";
 		Upp::String prefix="";
 		
-		Upp::Array<Event<ValueMap>> EventsMapMessageCreated{ [&](ValueMap e){if(NameOfFunction.IsEqual("help"))this->Help(e);} };
+		Upp::Array<Event<ValueMap>> EventsMapMessageCreated{ 
+			[&](ValueMap e){if(NameOfFunction.IsEqual("help"))Help(e);},
+			[&](ValueMap e){if(NameOfFunction.IsEqual("credit"))Credit(e);}
+		};
 		
 	
 		virtual bool goodPrefix(Upp::String prefixToTest);
