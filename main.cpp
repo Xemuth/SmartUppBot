@@ -11,12 +11,16 @@
 #ifdef flagRNG
 	#include <Discord_RNG/Discord_RNG.h>
 #endif
+#ifdef flagWOW
+#include <Discord_WOW/Discord_WOW.h>
+#endif
 
 
 using namespace Upp;
 //Module OverWatch : https://github.com/Xemuth/Discord_Overwatch
 //Module Minecraft : https://github.com/Xemuth/Discord_Minecraft
 //Module RNG : https://github.com/Xemuth/Discord_RNG
+//Module WOW : https://github.com/Xemuth/Discord_WOW
 //Module GraphBuilder : https://github.com/Xemuth/GraphBuilder
 //EasyConfiguration : https://github.com/Xemuth/EasyConfiguration
 
@@ -47,6 +51,10 @@ CONSOLE_APP_MAIN {
 		
 		#ifdef flagRNG
 			mybot.CreateModule<Discord_RNG>("RNG", "rng");
+		#endif
+		
+		#ifdef flagWOW
+			mybot.CreateModule<Discord_WOW>("WOW","bl");
 		#endif
 		
 		mybot.Launch();
