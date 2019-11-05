@@ -2,7 +2,7 @@ git pull
 cd ..
 
 
-FILE=./Discord_Minecraft
+FILE=Discord_Minecraft
 if [ -f "$FILE" ]; then
     cd Discord_Minecraft
 	git pull
@@ -11,7 +11,7 @@ else
     git clone https://github.com/Xemuth/Discord_Minecraft
 fi
 
-FILE=./Discord_Overwatch
+FILE=Discord_Overwatch
 if [ -f "$FILE" ]; then
 	cd Discord_Overwatch
 	git pull
@@ -20,7 +20,7 @@ else
     git clone https://github.com/Xemuth/Discord_Overwatch
 fi
 
-FILE=./Discord_RNG
+FILE=Discord_RNG
 if [ -f "$FILE" ]; then
 	cd Discord_RNG
 	git pull
@@ -29,7 +29,7 @@ else
     git clone https://github.com/Xemuth/Discord_RNG
 fi
 
-FILE=./Discord_WOW
+FILE=Discord_WOW
 if [ -f "$FILE" ]; then
 	cd Discord_WOW
 	git pull
@@ -47,7 +47,7 @@ else
     git clone https://github.com/Xemuth/EasyConfiguration
 fi
 
-FILE=./GraphBuilder
+FILE=GraphBuilder
 if [ -f "$FILE" ]; then
 	cd GraphBuilder
 	git pull 
@@ -57,7 +57,7 @@ else
 fi
 
 
-FILE=./RconManager
+FILE=RconManager
 if [ -f "$FILE" ]; then
 	cd RconManager
 	git pull
