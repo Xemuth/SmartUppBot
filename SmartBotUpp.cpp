@@ -267,7 +267,7 @@ bool DiscordModule::AddPrefix(Vector<String>& _prefix){
 			if(ToLower(str).IsEqual(ToLower(str0)))
 				b =true;
 		}
-		if(b)
+		if(!b)
 			prefix.Add(ToLower(str0));
 	}
 }
