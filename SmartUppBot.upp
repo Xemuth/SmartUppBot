@@ -13,8 +13,8 @@ library(LINUX) "gtk-x11-2.0 gdk-x11-2.0 X11 cairo  gdk_pixbuf-2.0 glib-2.0 gthre
 
 file
 	SmartBotUpp readonly separator,
-	SmartBotUpp.h,
 	SmartBotUpp.cpp,
+	SmartBotUpp.h,
 	DiscordUpp readonly separator,
 	Discord.h,
 	Discord.cpp,
@@ -24,5 +24,6 @@ mainconfig
 	"" = "DEBUG GRAPHBUILDER_DB",
 	"" = "LINUX",
 	"" = "MINECRAFT OVERWATCH GRAPHBUILDER_DB RNG",
-	"" = "";
+	"" = "OVERWATCH",
+	"" = "MINECRAFT";
 

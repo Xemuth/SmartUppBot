@@ -62,7 +62,7 @@ void SmartBotUpp::Event(ValueMap payload){
 		bool resolved =false;
 	    Vector<String> command;
 	    if ((~payload["d"]["content"]).Find(";") != -1){
-	    	command = Split((~payload["d"]["content"]),";");
+	    	command = Split((~payload["d"]["content"]),"|"); //TODO : séparateur | ou ||
 	    }else{
 	        command.Add((~payload["d"]["content"]));
 	    }
@@ -90,7 +90,8 @@ void SmartBotUpp::Event(ValueMap payload){
 							content.Replace(content.Left(content.Find("(")),"");
 							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});
 							if(content.Find(",") !=-1){
-									e.SetMessageArgs(  Split(content,",")  );	
+									//e.SetMessageArgs(  Split(content,",")  );
+									e.SetArgsTest(  Split(content,";")  );	// TODO : séparateur ;
 							}else if( TrimBoth(content).GetCount()>0){
 								e.SetMessageArgs(Vector<String>{content});
 							}
@@ -139,7 +140,7 @@ void SmartBotUpp::Event(ValueMap payload){
 							credit <<  version+"\n\n";
 							credit << "SmartUppBot Copyright (C) 2019 Clément Hamon\n\n";
 							credit << "Lib used to give life to the Smartest discord bot ever ! (not even joking)\n";
-							credit << "This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it\n";
+							credit << "This project have to be used with Ultimate++ FrameWork and required the Core Library from it\n";
 							credit << "http://www.ultimatepp.org\n";
 							credit << "Copyright © 1998, 2019 Ultimate++ team\n";
 							credit << "All those sources are contained in 'plugin' directory. Refer there for licenses, however all libraries have BSD-compatible license.\n";
@@ -213,6 +214,15 @@ void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	}
 }
 void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
+
+void DiscordModule::SetArgsTest(const Upp::Vector<String>& _Args){
+	//ArgsTest.Clear();
+	
+	for(String arg : _Args){
+		Cout() << "ARGUMENTS : " << arg << EOL;
+		
+	}
+}
 
 void DiscordModule::ClearMessageArgs(){
 	MessageArgs.Clear();
