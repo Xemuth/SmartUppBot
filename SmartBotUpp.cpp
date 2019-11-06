@@ -264,11 +264,11 @@ bool DiscordModule::AddPrefix(Vector<String>& _prefix){
 	for(String& str0 : _prefix){
 		b =false;
 		for(String& str : prefix){
-			if(ToLower(str).IsEqual(_prefix))
+			if(ToLower(str).IsEqual(ToLower(str0)))
 				b =true;
 		}
 		if(b)
-			prefix.Add(str0);
+			prefix.Add(ToLower(str0));
 	}
 }
 
@@ -288,7 +288,7 @@ bool DiscordModule::RemovePrefix(String _prefix){
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){
 	prefixToTest = ToLower(prefixToTest);
 	for(String& str : prefix){
-		if( ToLower(str).IsEqual(ToLower) || str.GetCount() =0) //Ici soit le prefix correspond au prefixes du module soit le module possède un prefix vide et donc est enclanché
+		if( ToLower(str).IsEqual(prefixToTest) || str.GetCount() ==0) //Ici soit le prefix correspond au prefixes du module soit le module possède un prefix vide et donc est enclanché
 			return true;
 	}
 	return false;

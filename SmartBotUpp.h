@@ -85,7 +85,6 @@ class DiscordModule{
 		String ChannelLastMessage=""; //hook to latest message chan 
 		String NameOfFunction="";
 		Vector<String> MessageArgs;
-		ArrayMap<String,String>
 		
 	    String AuthorId =""; 
 	    String Message ="";
