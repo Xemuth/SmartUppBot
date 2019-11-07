@@ -249,7 +249,50 @@ String DiscordModule::Credit(ValueMap json,bool sendCredit){
 	return credit;
 }
 
+
+String& DiscordModule::AddPrefix(String _prefix){
+	_prefix = ToLower(_prefix);
+	for(String& str : prefix){
+		if(ToLower(str).IsEqual(_prefix))
+			return str;
+	}
+	return prefix.Add(_prefix);
+}
+
+bool DiscordModule::AddPrefix(Vector<String>& _prefix){
+	bool b =false;
+	for(String& str0 : _prefix){
+		b =false;
+		for(String& str : prefix){
+			if(ToLower(str).IsEqual(ToLower(str0)))
+				b =true;
+		}
+		if(!b)
+			prefix.Add(ToLower(str0));
+	}
+}
+
+bool DiscordModule::RemovePrefix(String _prefix){
+	int cpt = 0;
+	for(String& str : prefix){
+		if(ToLower(str).IsEqual(_prefix)){
+			prefix.Remove(cpt);
+			return true;
+		}
+		cpt++;
+	}
+	return false;
+}
+		
+		
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){
-	return !ToUpperAscii(prefix).Compare(ToUpper(prefixToTest)); //Must be override if you want disable prefix checking and set event to a single prefix commande
+	prefixToTest = ToLower(prefixToTest);
+	for(String& str : prefix){
+		if( ToLower(str).IsEqual(prefixToTest) || str.GetCount() ==0) //Ici soit le prefix correspond au prefixes du module soit le module possède un prefix vide et donc est enclanché
+			return true;
+	}
+	return false;
+	
+	//return !ToUpperAscii(prefix).Compare(ToUpper(prefixToTest)); //Must be override if you want disable prefix checking and set event to a single prefix commande
 }
 

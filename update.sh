@@ -2,12 +2,14 @@ git pull
 cd ..
 
 
-FILE=Discord_Minecraft
+FILE=./Discord_Minecraft
 if [ -f "$FILE" ]; then
+	echo "Pulling Discord_Minecraft"
     cd Discord_Minecraft
 	git pull
 	cd ..
 else 
+echo "Creating Discord_Minecraft"
     git clone https://github.com/Xemuth/Discord_Minecraft
 fi
 
