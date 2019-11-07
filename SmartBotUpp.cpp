@@ -103,6 +103,9 @@ void SmartBotUpp::Event(ValueMap payload){
 		           			
 		           			NamedArgs.Add(key, DiscordModule::ResolveType(value));
 		           		}
+		           		else{
+		           			// Go commit no live
+		           		}
 		           	}
 		        }
 		        
@@ -132,11 +135,8 @@ void SmartBotUpp::Event(ValueMap payload){
 							e.SetMessage(content); 														// Set message
 	      					e.SetNameOfFunction(Function);												// Set name of function
 	      					
-	      					Cout() << "ARGS :";
-	      					for (const String& key : NamedArgs.GetKeys()){
-	      						
-	      						Cout() << key << " -> " << NamedArgs.Get(key) << EOL;
-	      						
+	      					if (NamedArgs.GetCount() > 0){
+	      						e.SetArgsTest(NamedArgs);
 	      					}
 	      					
 							e.ShowInformation();														// Show message info in console
