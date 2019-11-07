@@ -104,7 +104,7 @@ class DiscordModule{
 		void SetMessageArgs(const Upp::Vector<String>& _Args);
 		void SetNameOfFunction(Upp::String functionName);
 		
-		void SetArgsTest(const Upp::Vector<String>& _Args);
+		void SetArgsTest(const VectorMap<String, Value>& _Args);
 		
 		void SetBotPtr(Discord& discord);
 		Discord* GetBotPtr();
