@@ -62,44 +62,59 @@ void SmartBotUpp::Event(ValueMap payload){
 		bool resolved =false;
 	    Vector<String> command;
 	    if ((~payload["d"]["content"]).Find(";") != -1){
-	    	command = Split((~payload["d"]["content"]),";");
+	    	command = Split((~payload["d"]["content"]),"|"); //TODO : séparateur | ou ||
 	    }else{
 	        command.Add((~payload["d"]["content"]));
 	    }
 	    for(String &s : command){
 	        if(s.GetCount()> 0){
 		        String content =s;
+		        
+		        //Setting prefix
 		        String prefixe =s;
+		        prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
+				prefixe.Replace("!","");
 		        
 		        String Function = "";
 		        Vector<String> Args;
+		        
+		        
+		        
 		        
 		        try{
 				    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
 				    prefixe.Replace("!","");
 				    for(auto &e : AllModules){
+				        // If prefixe match a module
 				       	if(e.goodPrefix(prefixe)){
 				       		e.ClearMessageArgs();
-							e.SetChannelLastMessage( payload["d"]["channel_id"]); //HEre we hook chan  
-							e.SetAuthorId(payload["d"]["author"]["id"]);
-							e.SetMessage(content);
-							content.Replace(String("!" +prefixe +" "),"");
-							if(content.Find("(") == -1 || content.Find(")") == -1) break;
-							e.SetNameOfFunction(TrimBoth(content.Left(content.Find("("))));
+							e.SetChannelLastMessage( payload["d"]["channel_id"]); 						// Set channel
+							e.SetAuthorId(payload["d"]["author"]["id"]); 								// Set user Discord ID
+							e.SetMessage(content); 														// Set message
+							content.Replace(String("!" +prefixe +" "),"");								// Remove "!<prefixe>" from message
 							
-							content.Replace(content.Left(content.Find("(")),"");
-							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});
-							if(content.Find(",") !=-1){
-									e.SetMessageArgs(  Split(content,",")  );	
+							if(content.Find("(") == -1 || content.Find(")") == -1) break;				// break if no parenthesis
+							e.SetNameOfFunction(TrimBoth(content.Left(content.Find("("))));				// Set name of function
+							
+							content.Replace(content.Left(content.Find("(")),"");						// Remove name of function from message
+							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});	// Remove parenthesis from message
+							
+							// Setting args
+							if(content.Find(";") !=-1){
+									//e.SetMessageArgs(  Split(content,",")  );
+									e.SetArgsTest(  Split(content,";")  );
 							}else if( TrimBoth(content).GetCount()>0){
-								e.SetMessageArgs(Vector<String>{content});
+								//e.SetMessageArgs(Vector<String>{content});
+								e.SetArgsTest(Vector<String>{content});
 							}
-							e.ShowInformation();
-							e.EventsMessageCreated(payload);
+							e.ShowInformation();														// Show message info in console
+							e.EventsMessageCreated(payload);											// Call child event
 							resolved =true;
 						//	break; Finalement plusieurs modules peuvent eventuellement répondre
 				       	}
 					}
+					
+					// If the prefix didn't match any module
 					if(!resolved){
 						if(Function.GetCount() == 0) Function = TrimBoth(content.Left(content.Find("(")));
 						Function.Replace("!","");
@@ -139,7 +154,7 @@ void SmartBotUpp::Event(ValueMap payload){
 							credit <<  version+"\n\n";
 							credit << "SmartUppBot Copyright (C) 2019 Clément Hamon\n\n";
 							credit << "Lib used to give life to the Smartest discord bot ever ! (not even joking)\n";
-							credit << "This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it\n";
+							credit << "This project have to be used with Ultimate++ FrameWork and required the Core Library from it\n";
 							credit << "http://www.ultimatepp.org\n";
 							credit << "Copyright © 1998, 2019 Ultimate++ team\n";
 							credit << "All those sources are contained in 'plugin' directory. Refer there for licenses, however all libraries have BSD-compatible license.\n";
@@ -213,6 +228,16 @@ void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	}
 }
 void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
+
+void DiscordModule::SetArgsTest(const Upp::Vector<String>& _Args){
+	//ArgsTest.Clear();
+	
+
+	for(String arg : _Args){
+		Cout() << "ARGUMENTS : " << arg << "; ";
+		
+	}
+}
 
 void DiscordModule::ClearMessageArgs(){
 	MessageArgs.Clear();
@@ -294,5 +319,38 @@ bool DiscordModule::goodPrefix(Upp::String prefixToTest){
 	return false;
 	
 	//return !ToUpperAscii(prefix).Compare(ToUpper(prefixToTest)); //Must be override if you want disable prefix checking and set event to a single prefix commande
+}
+
+//checking if string could be a number
+bool DiscordModule::IsANumber(Upp::String stringNumber){
+	if (std::isdigit(stringNumber[0]) || (stringNumber.GetCount() > 1 && (stringNumber[0] == '+'))){
+        for (int i = 1 ; i < stringNumber.GetCount(); ++i)
+            if (!std::isdigit(stringNumber[i]))
+                return false;
+        return true;
+    }
+    return false;
+}
+
+//Function to allow inheritance of type from a string
+Value DiscordModule::ResolveType(String valueToResolve){
+    if(valueToResolve.GetCount()> 0 && DiscordModule::IsANumber(valueToResolve)){
+        if(valueToResolve.GetCount() > 9){
+            return Value(std::stoi(valueToResolve.ToStd()));
+        }else if(valueToResolve.Find(",") || valueToResolve.Find(".")){
+            return Value(std::stoi(valueToResolve.ToStd()));
+        }else{
+            return Value(std::stoi(valueToResolve.ToStd()));
+        }
+    }else if(valueToResolve.GetCount()> 0 && ((valueToResolve[0] == 'b' && DiscordModule::IsANumber(valueToResolve.Right(valueToResolve.GetCount()-1))) || (ToLower(valueToResolve).IsEqual("true") || ToLower(valueToResolve).IsEqual("false")))  ){
+        if(valueToResolve.Find("b")>-1 && DiscordModule::IsANumber(valueToResolve.Right(valueToResolve.GetCount()-1)) ){
+            valueToResolve.Replace("b","");
+            return Value(((std::stoi(valueToResolve.ToStd())!=0)? true:false));
+        }else if(valueToResolve.IsEqual("true") || valueToResolve.IsEqual("false")){
+            return Value(((valueToResolve.IsEqual("true"))? true:false));
+        }
+    }
+    return Value(valueToResolve);
+
 }
 

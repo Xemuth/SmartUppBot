@@ -85,6 +85,7 @@ class DiscordModule{
 		String ChannelLastMessage=""; //hook to latest message chan 
 		String NameOfFunction="";
 		Vector<String> MessageArgs;
+		VectorMap<String, Value> ArgsTest;
 		
 	    String AuthorId =""; 
 	    String Message ="";
@@ -102,6 +103,8 @@ class DiscordModule{
 		
 		void SetMessageArgs(const Upp::Vector<String>& _Args);
 		void SetNameOfFunction(Upp::String functionName);
+		
+		void SetArgsTest(const Upp::Vector<String>& _Args);
 		
 		void SetBotPtr(Discord& discord);
 		Discord* GetBotPtr();
@@ -126,6 +129,9 @@ class DiscordModule{
 	
 		virtual bool goodPrefix(Upp::String prefixToTest);
 		virtual void EventsMessageCreated(ValueMap payload);
+		
+		static Value ResolveType(String valueToResolve);
+		static bool IsANumber(String stringNumber);
 };
 
 
