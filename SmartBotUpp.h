@@ -112,13 +112,20 @@ class DiscordModule{
 		void ClearMessageArgs();
 		
 		Upp::String name="";
-		Upp::String prefix="";
+		//Upp::String prefix="";
+		Vector<Upp::String> prefix;
+		
+		
 		
 		Upp::Array<Event<ValueMap>> EventsMapMessageCreated{ 
 			[&](ValueMap e){if(NameOfFunction.IsEqual("help"))Help(e);},
 			[&](ValueMap e){if(NameOfFunction.IsEqual("credit"))Credit(e);}
 		};
 		
+		
+		String& AddPrefix(String _prefix);
+		bool AddPrefix(Vector<String>& _prefix);
+		bool RemovePrefix(String _prefix);
 	
 		virtual bool goodPrefix(Upp::String prefixToTest);
 		virtual void EventsMessageCreated(ValueMap payload);

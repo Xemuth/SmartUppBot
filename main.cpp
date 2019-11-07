@@ -46,7 +46,7 @@ CONSOLE_APP_MAIN {
 			#else
 				String RconFile = R"(C:/rconLogs.txt)";
 			#endif
-			mybot.CreateModule<Discord_Minecraft>("Minecraft","mc",RconFile);
+			mybot.CreateModule<Discord_Minecraft>("Minecraft",Vector<String>{"mc","test","multi",""},RconFile);
 		#endif
 		
 		#ifdef flagRNG
