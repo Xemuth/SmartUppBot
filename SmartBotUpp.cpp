@@ -99,7 +99,7 @@ void SmartBotUpp::Event(ValueMap payload){
 		           			// TODO : use config file
 		           			auto mySplit = Split(arg, ':');
 		           			String key = ToLower(TrimBoth(mySplit[0]));
-		           			String value = ToLower(TrimBoth(mySplit[1]));
+		           			String value = TrimBoth(mySplit[1]);
 		           			
 		           			NamedArgs.Add(key, DiscordModule::ResolveType(value));
 		           		}
