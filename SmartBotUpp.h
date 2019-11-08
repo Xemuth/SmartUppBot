@@ -84,8 +84,7 @@ class DiscordModule{
 	protected:
 		String ChannelLastMessage=""; //hook to latest message chan 
 		String NameOfFunction="";
-		Vector<String> MessageArgs;
-		VectorMap<String, Value> ArgsTest;
+		VectorMap<String, Value> MessageArgs;
 		
 	    String AuthorId =""; 
 	    String Message ="";
@@ -101,10 +100,8 @@ class DiscordModule{
 		void SetAuthorId(Upp::String _AuthorId);
 		void SetMessage(Upp::String _Message);
 		
-		void SetMessageArgs(const Upp::Vector<String>& _Args);
+		void SetMessageArgs(const Upp::VectorMap<String, Value>& _Args);
 		void SetNameOfFunction(Upp::String functionName);
-		
-		void SetArgsTest(const Upp::Vector<String>& _Args);
 		
 		void SetBotPtr(Discord& discord);
 		Discord* GetBotPtr();

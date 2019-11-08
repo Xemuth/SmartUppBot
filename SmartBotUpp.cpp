@@ -61,29 +61,71 @@ void SmartBotUpp::Event(ValueMap payload){
 	if((~payload["d"]["content"])[0]  == '!' && !(~payload["d"]["author"]["id"]).IsEqual(name)){
 		bool resolved =false;
 	    Vector<String> command;
-	    if ((~payload["d"]["content"]).Find(";") != -1){
-	    	command = Split((~payload["d"]["content"]),"|"); //TODO : séparateur | ou ||
+	    if ((~payload["d"]["content"]).Find(";") != -1){// TODO : use config file
+	    	command = Split((~payload["d"]["content"]),"|"); // TODO : use config file
 	    }else{
 	        command.Add((~payload["d"]["content"]));
 	    }
 	    for(String &s : command){
 	        if(s.GetCount()> 0){
-		        String content =s;
-		        
-		        //Setting prefix
+		        String content = s;
 		        String prefixe =s;
-		        prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
-				prefixe.Replace("!","");
+		        String Function;
 		        
-		        String Function = "";
 		        Vector<String> Args;
+		        VectorMap<String, Value> NamedArgs;
 		        
+		        // TODO : use config file
+		        content.Replace("!", "");
 		        
+		        //  1 - Chercher les args
 		        
+		        // Setting args
+		        if(content.Find('(') != -1){
+		            // There are args
+		            String mess = content;
+		            // Get everything inside parenthesis
+		            String argsString = mess.Mid(mess.Find('(') + 1, mess.ReverseFind(')') - mess.Find('(') - 1);
+		            
+		            //Removed args from content
+		            content.Replace('(' + argsString + ')',"");
+		            
+		            // TODO : use config file
+		           	Args.Append(Split(argsString, ';'));
+		           	
+		           	for (String& arg : Args){
+		           		if (arg.Find(':') != -1){
+		           			// Named args
+		           			// TODO : use config file
+		           			auto mySplit = Split(arg, ':');
+		           			String key = ToLower(TrimBoth(mySplit[0]));
+		           			String value = ToLower(TrimBoth(mySplit[1]));
+		           			
+		           			NamedArgs.Add(key, DiscordModule::ResolveType(value));
+		           		}
+		           		else{
+		           			// Go commit no live
+		           		}
+		           	}
+		        }
+		        
+		        // 2 - Chercher la fonction & prefix
+		        if (content.Find(" ") != -1){
+		            // Prefix + Func name
+		            auto mySplit = Split(content, " ");
+		            
+		            Function = ToLower(TrimBoth(mySplit[0]));
+		            prefixe = ToLower(TrimBoth(mySplit[1]));           
+		        }
+		        else{
+		            // No prefix
+		            Function = ToLower(TrimBoth(content));
+		        }
+		        
+		        // Reset content to full command
+		        content = s;
 		        
 		        try{
-				    prefixe = (prefixe.Find(" ",0)>0)? prefixe.Left(prefixe.Find(" ",0)) :  prefixe;
-				    prefixe.Replace("!","");
 				    for(auto &e : AllModules){
 				        // If prefixe match a module
 				       	if(e.goodPrefix(prefixe)){
@@ -91,26 +133,15 @@ void SmartBotUpp::Event(ValueMap payload){
 							e.SetChannelLastMessage( payload["d"]["channel_id"]); 						// Set channel
 							e.SetAuthorId(payload["d"]["author"]["id"]); 								// Set user Discord ID
 							e.SetMessage(content); 														// Set message
-							content.Replace(String("!" +prefixe +" "),"");								// Remove "!<prefixe>" from message
-							
-							if(content.Find("(") == -1 || content.Find(")") == -1) break;				// break if no parenthesis
-							e.SetNameOfFunction(TrimBoth(content.Left(content.Find("("))));				// Set name of function
-							
-							content.Replace(content.Left(content.Find("(")),"");						// Remove name of function from message
-							content = Replace(content,Vector<String>{"(",")"},Vector<String>{"",""});	// Remove parenthesis from message
-							
-							// Setting args
-							if(content.Find(";") !=-1){
-									//e.SetMessageArgs(  Split(content,",")  );
-									e.SetArgsTest(  Split(content,";")  );
-							}else if( TrimBoth(content).GetCount()>0){
-								//e.SetMessageArgs(Vector<String>{content});
-								e.SetArgsTest(Vector<String>{content});
-							}
+	      					e.SetNameOfFunction(Function);												// Set name of function
+	      					
+	      					if (NamedArgs.GetCount() > 0){
+	      						e.SetMessageArgs(NamedArgs);
+	      					}
+	      					
 							e.ShowInformation();														// Show message info in console
 							e.EventsMessageCreated(payload);											// Call child event
-							resolved =true;
-						//	break; Finalement plusieurs modules peuvent eventuellement répondre
+							resolved = true;
 				       	}
 					}
 					
@@ -220,7 +251,7 @@ void DiscordModule::EventsMessageCreated(ValueMap payload){
 void DiscordModule::SetChannelLastMessage(Upp::String _ChannelLastMessage){ChannelLastMessage = _ChannelLastMessage;}
 void DiscordModule::SetAuthorId(Upp::String _AuthorId){AuthorId =_AuthorId;}
 void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
-void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
+void DiscordModule::SetMessageArgs(const Upp::VectorMap<String, Value>& _Args){
 	MessageArgs.Clear();
 	MessageArgs.Append(_Args);
 	for(String &str : MessageArgs){
@@ -228,16 +259,6 @@ void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	}
 }
 void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
-
-void DiscordModule::SetArgsTest(const Upp::Vector<String>& _Args){
-	//ArgsTest.Clear();
-	
-
-	for(String arg : _Args){
-		Cout() << "ARGUMENTS : " << arg << "; ";
-		
-	}
-}
 
 void DiscordModule::ClearMessageArgs(){
 	MessageArgs.Clear();
@@ -249,9 +270,9 @@ void DiscordModule::ShowInformation(){
 	info << "Author ID : " << AuthorId <<"\n";
  	info << "Message : " << Message <<"\n";
  	info << "Name of Function : " << NameOfFunction <<"\n";
-	info << " Args : ";
-		for(String &t : MessageArgs){
-			info << t <<" ";	
+	info << " Args : \n";
+		for(String &key : MessageArgs.GetKeys()){
+			info << key <<" -> " << MessageArgs[key] << "\n";	
 		}
 	info <<"\n";
 	Cout() << info <<"\n";
@@ -269,7 +290,7 @@ void DiscordModule::Help(ValueMap json){
 }
 
 String DiscordModule::Credit(ValueMap json,bool sendCredit){
-	String credit =  "This module have been made by a stanger !";
+	String credit =  "This module have been made by a stranger !";
 	if(sendCredit) BotPtr->CreateMessage(ChannelLastMessage,"```"+credit +"```");
 	return credit;
 }
@@ -295,6 +316,7 @@ bool DiscordModule::AddPrefix(Vector<String>& _prefix){
 		if(!b)
 			prefix.Add(ToLower(str0));
 	}
+	return b;
 }
 
 bool DiscordModule::RemovePrefix(String _prefix){
