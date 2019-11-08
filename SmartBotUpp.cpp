@@ -136,7 +136,7 @@ void SmartBotUpp::Event(ValueMap payload){
 	      					e.SetNameOfFunction(Function);												// Set name of function
 	      					
 	      					if (NamedArgs.GetCount() > 0){
-	      						e.SetArgsTest(NamedArgs);
+	      						e.SetMessageArgs(NamedArgs);
 	      					}
 	      					
 							e.ShowInformation();														// Show message info in console
@@ -251,7 +251,7 @@ void DiscordModule::EventsMessageCreated(ValueMap payload){
 void DiscordModule::SetChannelLastMessage(Upp::String _ChannelLastMessage){ChannelLastMessage = _ChannelLastMessage;}
 void DiscordModule::SetAuthorId(Upp::String _AuthorId){AuthorId =_AuthorId;}
 void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
-void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
+void DiscordModule::SetMessageArgs(const Upp::VectorMap<String, Value>& _Args){
 	MessageArgs.Clear();
 	MessageArgs.Append(_Args);
 	for(String &str : MessageArgs){
@@ -259,16 +259,6 @@ void DiscordModule::SetMessageArgs(const Upp::Vector<String>& _Args){
 	}
 }
 void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
-
-void DiscordModule::SetArgsTest(const VectorMap<String, Value>& _Args){
-	//ArgsTest.Clear();
-	
-
-	for(String arg : _Args){
-		Cout() << "ARGUMENTS : " << arg << "; ";
-		
-	}
-}
 
 void DiscordModule::ClearMessageArgs(){
 	MessageArgs.Clear();
@@ -280,9 +270,9 @@ void DiscordModule::ShowInformation(){
 	info << "Author ID : " << AuthorId <<"\n";
  	info << "Message : " << Message <<"\n";
  	info << "Name of Function : " << NameOfFunction <<"\n";
-	info << " Args : ";
-		for(String &t : MessageArgs){
-			info << t <<" ";	
+	info << " Args : \n";
+		for(String &key : MessageArgs.GetKeys()){
+			info << key <<" -> " << MessageArgs[key] << "\n";	
 		}
 	info <<"\n";
 	Cout() << info <<"\n";
@@ -300,7 +290,7 @@ void DiscordModule::Help(ValueMap json){
 }
 
 String DiscordModule::Credit(ValueMap json,bool sendCredit){
-	String credit =  "This module have been made by a stanger !";
+	String credit =  "This module have been made by a stranger !";
 	if(sendCredit) BotPtr->CreateMessage(ChannelLastMessage,"```"+credit +"```");
 	return credit;
 }
