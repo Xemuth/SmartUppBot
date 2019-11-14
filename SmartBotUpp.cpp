@@ -253,9 +253,8 @@ void DiscordModule::SetAuthorId(Upp::String _AuthorId){AuthorId =_AuthorId;}
 void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
 void DiscordModule::SetMessageArgs(const Upp::VectorMap<String, Value>& _Args){
 	MessageArgs.Clear();
-	MessageArgs.Append(_Args);
-	for(String &str : MessageArgs){
-		str=TrimBoth(str);	
+	for(const String &str : MessageArgs.GetKeys()){
+		MessageArgs.Add(str,MessageArgs.Get(str));
 	}
 }
 void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
@@ -271,8 +270,8 @@ void DiscordModule::ShowInformation(){
  	info << "Message : " << Message <<"\n";
  	info << "Name of Function : " << NameOfFunction <<"\n";
 	info << " Args : \n";
-		for(String &key : MessageArgs.GetKeys()){
-			info << key <<" -> " << MessageArgs[key] << "\n";	
+		for(const String &key : MessageArgs.GetKeys()){
+			info << key <<" -> " << MessageArgs.Get(key) << "\n";	
 		}
 	info <<"\n";
 	Cout() << info <<"\n";
@@ -373,7 +372,7 @@ Value DiscordModule::ResolveType(String valueToResolve){
         }else if(valueToResolve.IsEqual("true") || valueToResolve.IsEqual("false")){
             return Value(((valueToResolve.IsEqual("true"))? true:false));
         }
-    }else if(StrToDate(aDate,valueToResolve){
+    }else if(StrToDate(aDate,valueToResolve)){
      	return Value(aDate);   
     }
     return Value(valueToResolve);
@@ -381,12 +380,14 @@ Value DiscordModule::ResolveType(String valueToResolve){
 
 unsigned int DiscordModule::Levensthein_Distance(const String& s1, const String& s2){
 	int len1 = s1.GetCount(), len2 = s2.GetCount();
-	Vector<Vector<unsigned int>> d(len1 + 1,std::vector<unsigned int>(len2 + 1));
-
+	Vector<Vector<unsigned int>> d;
+	d.AddN(len1 + 1);
+	for(Vector<unsigned int> & myVector :d){
+		myVector.AddN(len2 + 1);
+	}
 	d[0][0] = 0;
 	for(unsigned int i = 1; i <= len1; ++i) d[i][0] = i;
 	for(unsigned int i = 1; i <= len2; ++i) d[0][i] = i;
-
 	for(unsigned int i = 1; i <= len1; ++i)
 		for(unsigned int j = 1; j <= len2; ++j)
                       // note that std::min({arg1, arg2, arg3}) works only in C++11,
@@ -402,7 +403,7 @@ Date DiscordModule::TransformStringToEuropeanDate(const String& dateToTransform,
 	auto d = Split(theDate,"/");
 	if(!IsANumber(d[0]) || !IsANumber(d[1]) || !IsANumber(d[2])){
 		*isValide =false;
-		return Date;	
+		return Date();	
 	}
 	return Date(std::stoi(d[2].ToStd()),std::stoi(d[1].ToStd()),std::stoi(d[0].ToStd()));
 }
