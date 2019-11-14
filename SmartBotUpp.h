@@ -54,7 +54,7 @@ class SmartBotUpp{
 		Upp::String name="";
 		Upp::String token="";
 		
-		Upp::String version = " ---------------- SmartUppBot -- V2.0.1 -- 25/10/2019 ----------------";
+		Upp::String version = " ---------------- SmartUppBot -- V2.5.0 -- 14/11/2019 ----------------";
 		
 		void Event(ValueMap payload);
 		Discord& getBot();
@@ -91,7 +91,7 @@ class DiscordModule{
 	    
 	    Discord* BotPtr;
 	public:
-		virtual void Help(ValueMap json);
+		virtual void Help(ValueMap& json);
 	    virtual String Credit(ValueMap json,bool sendCredit = true);
 		
 		void SetChannelLastMessage(Upp::String _ChannelLastMessage);
@@ -115,8 +115,8 @@ class DiscordModule{
 		
 		
 		Upp::Array<Event<ValueMap>> EventsMapMessageCreated{ 
-			[&](ValueMap e){if(NameOfFunction.IsEqual("help"))Help(e);},
-			[&](ValueMap e){if(NameOfFunction.IsEqual("credit"))Credit(e);}
+			[&](ValueMap& e){if(NameOfFunction.IsEqual("help"))Help(e);},
+			[&](ValueMap& e){if(NameOfFunction.IsEqual("credit"))Credit(e);}
 		};
 		
 		

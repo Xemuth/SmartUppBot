@@ -7,14 +7,15 @@ uses
 	GraphBuilder,
 	EasyConfiguration,
 	Discord_RNG,
+	Discord_Minecraft,
 	Discord_WOW;
 
 library(LINUX) "gtk-x11-2.0 gdk-x11-2.0 X11 cairo  gdk_pixbuf-2.0 glib-2.0 gthread-2.0 gobject-2.0 ssl crypto notify";
 
 file
 	SmartBotUpp readonly separator,
-	SmartBotUpp.cpp,
 	SmartBotUpp.h,
+	SmartBotUpp.cpp,
 	DiscordUpp readonly separator,
 	Discord.h,
 	Discord.cpp,
@@ -24,6 +25,6 @@ mainconfig
 	"" = "DEBUG GRAPHBUILDER_DB",
 	"" = "LINUX",
 	"" = "MINECRAFT OVERWATCH GRAPHBUILDER_DB RNG",
-	"" = "OVERWATCH",
-	"" = "MINECRAFT";
+	"" = "WOW",
+	"" = "OVERWATCH";
 

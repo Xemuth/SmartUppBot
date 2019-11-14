@@ -58,7 +58,7 @@ void SmartBotUpp::trace(){
 
 void SmartBotUpp::Event(ValueMap payload){
 	
-	if((~payload["d"]["content"])[0]  == '!' && !(~payload["d"]["author"]["id"]).IsEqual(name)){
+	if((~payload["d"]["content"])[0]  == '!' && !(~payload["d"]["author"]["id"]).IsEqual(name) && (~payload["d"]["content"]).GetCount() > 1){
 		bool resolved =false;
 	    Vector<String> command;
 	    if ((~payload["d"]["content"]).Find(";") != -1){// TODO : use config file
@@ -77,7 +77,7 @@ void SmartBotUpp::Event(ValueMap payload){
 		        
 		        // TODO : use config file
 		        content.Replace("!", "");
-		        
+		        content =TrimBoth(content);
 		        //  1 - Chercher les args
 		        
 		        // Setting args
@@ -114,8 +114,8 @@ void SmartBotUpp::Event(ValueMap payload){
 		            // Prefix + Func name
 		            auto mySplit = Split(content, " ");
 		            
-		            Function = ToLower(TrimBoth(mySplit[0]));
-		            prefixe = ToLower(TrimBoth(mySplit[1]));           
+		            prefixe = ToLower(TrimBoth(mySplit[0]));
+		            Function = ToLower(TrimBoth(mySplit[1]));           
 		        }
 		        else{
 		            // No prefix
@@ -124,84 +124,75 @@ void SmartBotUpp::Event(ValueMap payload){
 		        
 		        // Reset content to full command
 		        content = s;
-		        
+		        // If the prefix didn't match any module
+				if(prefixe.GetCount() ==0 && ToLower(Function).IsEqual("modules")){
+					String modules = "";
+					bool first = false;
+					for(auto &e : AllModules){
+						modules += ((first)? ", ":"")+ e.name;
+						first = true;	
+					}
+					bot.CreateMessage(payload["d"]["channel_id"],"```"+ version+"\nLes modules actuelles sont : " +modules +"```");
+					resolved =true;
+				}else if(prefixe.GetCount() ==0 && ToLower(Function).IsEqual("help")){
+					String help = "```";
+					help <<  version+"\n\n";
+					help << "!Credit() "<<" -> Affiche les crédit de SmartUppBot.\n";
+					help << "!Modules()"<<" -> Affiche les modules actuellement chargé par SmartUppBot.\n\n";
+					help << "Pour obtenir l'aide des différents modules utilisez les commandes suivantes : " << "\n";
+					for(auto &e : AllModules){
+						help << "!" << e.prefix << " Help()" << "\n";
+					}
+					help << "\nPour afficher les crédits des différents modules utilisez les commandes suivantes : " << "\n";
+					for(auto &e : AllModules){
+						help << "!" << e.prefix << " Credit()" << "\n";
+					}
+					help << "```";
+					bot.CreateMessage(payload["d"]["channel_id"], help);
+					resolved =true;
+				}else if(prefixe.GetCount() ==0 && ToLower(Function).IsEqual("credit")){
+					String credit = "```";
+					credit <<  version+"\n\n";
+					credit << "SmartUppBot Copyright (C) 2019 Clément Hamon\n\n";
+					credit << "Lib used to give life to the Smartest discord bot ever ! (not even joking)\n";
+					credit << "This project have to be used with Ultimate++ FrameWork and required the Core Library from it\n";
+					credit << "http://www.ultimatepp.org\n";
+					credit << "Copyright © 1998, 2019 Ultimate++ team\n";
+					credit << "All those sources are contained in 'plugin' directory. Refer there for licenses, however all libraries have BSD-compatible license.\n";
+					credit << "Ultimate++ has BSD license:\n";
+					credit << "License : https://www.ultimatepp.org/app$ide$About$en-us.html\n";
+					credit << "Thanks to UPP team !\n";
+					credit << "Special thanks to jjacksonRIAB !\n\n";
+					for(auto &e : AllModules){
+						credit << "Credit of " + e.name + " module :\n";
+						credit << e.Credit(payload,false) <<"\n\n";
+					}
+					credit << "```";
+					bot.CreateMessage(payload["d"]["channel_id"], credit);
+					resolved =true;
+				}
 		        try{
-				    for(auto &e : AllModules){
-				        // If prefixe match a module
-				       	if(e.goodPrefix(prefixe)){
-				       		e.ClearMessageArgs();
-							e.SetChannelLastMessage( payload["d"]["channel_id"]); 						// Set channel
-							e.SetAuthorId(payload["d"]["author"]["id"]); 								// Set user Discord ID
-							e.SetMessage(content); 														// Set message
-	      					e.SetNameOfFunction(Function);												// Set name of function
-	      					
-	      					if (NamedArgs.GetCount() > 0){
-	      						e.SetMessageArgs(NamedArgs);
-	      					}
-	      					
-							e.ShowInformation();														// Show message info in console
-							e.EventsMessageCreated(payload);											// Call child event
-							resolved = true;
-				       	}
-					}
+		            if(!resolved){
+					    for(auto &e : AllModules){
+					        // If prefixe match a module
+					       	if(e.goodPrefix(prefixe)){
+					       		e.ClearMessageArgs();
+								e.SetChannelLastMessage( payload["d"]["channel_id"]); 						// Set channel
+								e.SetAuthorId(payload["d"]["author"]["id"]); 								// Set user Discord ID
+								e.SetMessage(content); 														// Set message
+		      					e.SetNameOfFunction(Function);												// Set name of function
+		      					
+		      					if (NamedArgs.GetCount() > 0){
+		      						e.SetMessageArgs(NamedArgs);
+		      					}
+		      					
+								e.ShowInformation();														// Show message info in console
+								e.EventsMessageCreated(payload);											// Call child event
+								resolved = true;
+					       	}
+						}
+		            }
 					
-					// If the prefix didn't match any module
-					if(!resolved){
-						if(Function.GetCount() == 0) Function = TrimBoth(content.Left(content.Find("(")));
-						Function.Replace("!","");
-						if(content.Find(",") !=-1){
-							if(Args.GetCount() ==0) Args.Append( Split(content,","));	
-						}else if( TrimBoth(content).GetCount()>0){
-							
-							if(Args.GetCount() ==0) Args.Append(Vector<String>{content});
-						}
-						if(ToLower(Function).IsEqual("modules")){
-							String modules = "";
-							bool first = false;
-							for(auto &e : AllModules){
-								modules += ((first)? ", ":"")+ e.name;
-								first = true;	
-							}
-							bot.CreateMessage(payload["d"]["channel_id"],"```"+ version+"\nLes modules actuelles sont : " +modules +"```");
-							resolved =true;
-						}else if(ToLower(Function).IsEqual("help")){
-							String help = "```";
-							help <<  version+"\n\n";
-							help << "!Credit() "<<" -> Affiche les crédit de SmartUppBot.\n";
-							help << "!Modules()"<<" -> Affiche les modules actuellement chargé par SmartUppBot.\n\n";
-							help << "Pour obtenir l'aide des différents modules utilisez les commandes suivantes : " << "\n";
-							for(auto &e : AllModules){
-								help << "!" << e.prefix << " Help()" << "\n";
-							}
-							help << "\nPour afficher les crédits des différents modules utilisez les commandes suivantes : " << "\n";
-							for(auto &e : AllModules){
-								help << "!" << e.prefix << " Credit()" << "\n";
-							}
-							help << "```";
-							bot.CreateMessage(payload["d"]["channel_id"], help);
-							resolved =true;
-						}else if(ToLower(Function).IsEqual("credit")){
-							String credit = "```";
-							credit <<  version+"\n\n";
-							credit << "SmartUppBot Copyright (C) 2019 Clément Hamon\n\n";
-							credit << "Lib used to give life to the Smartest discord bot ever ! (not even joking)\n";
-							credit << "This project have to be used with Ultimate++ FrameWork and required the Core Library from it\n";
-							credit << "http://www.ultimatepp.org\n";
-							credit << "Copyright © 1998, 2019 Ultimate++ team\n";
-							credit << "All those sources are contained in 'plugin' directory. Refer there for licenses, however all libraries have BSD-compatible license.\n";
-							credit << "Ultimate++ has BSD license:\n";
-							credit << "License : https://www.ultimatepp.org/app$ide$About$en-us.html\n";
-							credit << "Thanks to UPP team !\n";
-							credit << "Special thanks to jjacksonRIAB !\n\n";
-							for(auto &e : AllModules){
-								credit << "Credit of " + e.name + " module :\n";
-								credit << e.Credit(payload,false) <<"\n\n";
-							}
-							credit << "```";
-							bot.CreateMessage(payload["d"]["channel_id"], credit);
-							resolved =true;
-						}
-					}
 			    }catch(...){
 			        resolved =true;
 			     	
@@ -253,8 +244,8 @@ void DiscordModule::SetAuthorId(Upp::String _AuthorId){AuthorId =_AuthorId;}
 void DiscordModule::SetMessage(Upp::String _Message){Message = _Message;}
 void DiscordModule::SetMessageArgs(const Upp::VectorMap<String, Value>& _Args){
 	MessageArgs.Clear();
-	for(const String &str : MessageArgs.GetKeys()){
-		MessageArgs.Add(str,MessageArgs.Get(str));
+	for(const String &str : _Args.GetKeys()){
+		MessageArgs.Add(str,_Args.Get(str));
 	}
 }
 void DiscordModule::SetNameOfFunction(String functionName){NameOfFunction =ToLower(functionName);}
@@ -284,7 +275,7 @@ Discord* DiscordModule::GetBotPtr(){
 	return BotPtr;
 }
 
-void DiscordModule::Help(ValueMap json){
+void DiscordModule::Help(ValueMap& json){
 	BotPtr->CreateMessage(ChannelLastMessage, "```This module have not implemented Help function yet !```");
 }
 
@@ -334,7 +325,7 @@ bool DiscordModule::RemovePrefix(String _prefix){
 bool DiscordModule::goodPrefix(Upp::String prefixToTest){
 	prefixToTest = ToLower(prefixToTest);
 	for(String& str : prefix){
-		if( ToLower(str).IsEqual(prefixToTest) || str.GetCount() ==0) //Ici soit le prefix correspond au prefixes du module soit le module possède un prefix vide et donc est enclanché
+		if( ToLower(str).IsEqual(prefixToTest) ||( str.GetCount() ==0 && prefixToTest.GetCount() ==0 ) ) //Ici soit le prefix correspond au prefixes du module soit le module possède un prefix vide et donc est enclanché
 			return true;
 	}
 	return false;
