@@ -356,6 +356,8 @@ bool DiscordModule::IsANumber(Upp::String stringNumber){
 
 //Function to allow inheritance of type from a string
 Value DiscordModule::ResolveType(String valueToResolve){
+	SetDateScan("dmy");
+	Date aDate;
     if(valueToResolve.GetCount()> 0 && DiscordModule::IsANumber(valueToResolve)){
         if(valueToResolve.GetCount() > 9){
             return Value(std::stoi(valueToResolve.ToStd()));
@@ -371,9 +373,10 @@ Value DiscordModule::ResolveType(String valueToResolve){
         }else if(valueToResolve.IsEqual("true") || valueToResolve.IsEqual("false")){
             return Value(((valueToResolve.IsEqual("true"))? true:false));
         }
+    }else if(StrToDate(aDate,valueToResolve){
+     	return Value(aDate);   
     }
     return Value(valueToResolve);
-
 }
 
 unsigned int DiscordModule::Levensthein_Distance(const String& s1, const String& s2){
@@ -392,3 +395,14 @@ unsigned int DiscordModule::Levensthein_Distance(const String& s1, const String&
 	return d[len1][len2];
 }
 
+
+Date DiscordModule::TransformStringToEuropeanDate(const String& dateToTransform, bool* isValide){
+	String theDate = Replace(dateToTransform,Vector<String>{"\\","."," "},Vector<String>{"/","/","/"});
+	*isValide =true;
+	auto d = Split(theDate,"/");
+	if(!IsANumber(d[0]) || !IsANumber(d[1]) || !IsANumber(d[2])){
+		*isValide =false;
+		return Date;	
+	}
+	return Date(std::stoi(d[2].ToStd()),std::stoi(d[1].ToStd()),std::stoi(d[0].ToStd()));
+}

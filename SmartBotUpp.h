@@ -130,6 +130,7 @@ class DiscordModule{
 		static Value ResolveType(String valueToResolve);
 		static bool IsANumber(String stringNumber);
 		static int Levensthein_Distance(const String& s1, const String& s2);
+		static Date TransformStringToEuropeanDate(const String& dateToTransform);
 };
 
 
