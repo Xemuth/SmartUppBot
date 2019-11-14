@@ -69,7 +69,7 @@ void SmartBotUpp::Event(ValueMap payload){
 	    for(String &s : command){
 	        if(s.GetCount()> 0){
 		        String content = s;
-		        String prefixe =s;
+		        String prefixe ="";
 		        String Function;
 		        
 		        Vector<String> Args;
