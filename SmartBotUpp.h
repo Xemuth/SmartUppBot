@@ -86,7 +86,7 @@ class DiscordModule{
 		String NameOfFunction="";
 		VectorMap<String, Value> MessageArgs;
 		
-	    String AuthorId =""; 
+	    String AuthorId ="";
 	    String Message ="";
 	    
 	    Discord* BotPtr;
@@ -114,14 +114,14 @@ class DiscordModule{
 		
 		
 		
-		Upp::Array<Event<ValueMap>> EventsMapMessageCreated{ 
+		Upp::Array<Event<ValueMap>> EventsMapMessageCreated{
 			[&](ValueMap& e){if(NameOfFunction.IsEqual("help"))Help(e);},
 			[&](ValueMap& e){if(NameOfFunction.IsEqual("credit"))Credit(e);}
 		};
 		
 		
 		String& AddPrefix(String _prefix);
-		bool AddPrefix(Vector<String>& _prefix);
+		bool AddPrefix(const Vector<String>& _prefix);
 		bool RemovePrefix(String _prefix);
 	
 		virtual bool goodPrefix(Upp::String prefixToTest);

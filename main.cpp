@@ -29,7 +29,7 @@ CONSOLE_APP_MAIN {
 	#ifdef flagLINUX
 		String CfgFile = R"(/home/xemuth/token.cfg)";
 	#else
-		String CfgFile = R"(C:/discordTokens.txt)";
+		String CfgFile = R"(C:/Upp/discordTokens.txt)";
 	#endif
 	
 	EasyConfiguration ez(CfgFile);

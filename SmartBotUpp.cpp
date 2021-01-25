@@ -1,9 +1,9 @@
 #include <Core/Core.h>
 #include <SmartUppBot/SmartBotUpp.h>
-#include <GraphBuilder/GraphBuilder.h>
-/* 
+//#include <GraphBuilder/GraphBuilder.h>
+/*
 Project created 14/05/2019
-By Clément Hamon 
+By Clément Hamon
 Lib used to give life to the Smartest bot ever ! (not even joking)
 This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it
 http://www.ultimatepp.org
@@ -295,9 +295,9 @@ String& DiscordModule::AddPrefix(String _prefix){
 	return prefix.Add(_prefix);
 }
 
-bool DiscordModule::AddPrefix(Vector<String>& _prefix){
+bool DiscordModule::AddPrefix(const Vector<String>& _prefix){
 	bool b =false;
-	for(String& str0 : _prefix){
+	for(const String& str0 : _prefix){
 		b =false;
 		for(String& str : prefix){
 			if(ToLower(str).IsEqual(ToLower(str0)))
